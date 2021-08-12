@@ -2,6 +2,11 @@ import React from "react";
 import { Button } from "@material-ui/core";
 import * as Tone from "tone";
 import { Synth } from "tone";
+import brace from "brace"
+import AceEditor from "react-ace"
+import 'brace/mode/javascript'
+import 'brace/theme/github'
+
 
 export class Loops extends React.Component {
   constructor() {
@@ -18,6 +23,7 @@ export class Loops extends React.Component {
       errorMessage: ""
     };
     this.handleChange = this.handleChange.bind(this);
+    this.handleCodeChange = this.handleCodeChange.bind(this)
     this.playNote = this.playNote.bind(this);
     this.generatePattern = this.generatePattern.bind(this);
     this.playPattern = this.playPattern.bind(this);
@@ -39,6 +45,11 @@ export class Loops extends React.Component {
           [event.target.name]: event.target.value,
         });
     }
+  }
+
+  handleCodeChange(event) {
+    console.log(event)
+    this.setState({ code: event })
   }
 
   playNote(note, duration) {
@@ -106,14 +117,16 @@ export class Loops extends React.Component {
           "pattern.push" to push numbers into the pattern array
         </p>
         <div id="codeblock-form">
-          <textarea
-            name="code"
+          <AceEditor
+            // name="code"
             value={code}
-            onChange={this.handleChange}
+            onChange={this.handleCodeChange}
             id="loops-codeblock"
             placeholder="for(let i = 0; i < notesArrayLength; i++) {
             pattern.push(i)
-          }" />
+          }" 
+            style={{ height: "300px" }}
+          />
           <div>
             <Button onClick={this.generatePattern}>generate pattern</Button>
             <Button onClick={this.playPattern}>
