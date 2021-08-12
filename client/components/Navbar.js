@@ -5,10 +5,12 @@ import {logout} from '../store'
 
 const Navbar = ({handleClick, isLoggedIn}) => (
   <div className="header">
+    <Link to='/home'>
     <div id="title">
     <h1>{'{coda}'}</h1>
     <h3>making music with code</h3>
     </div>
+    </Link>
     <nav>
       {isLoggedIn ? (
         <div className="navbar">

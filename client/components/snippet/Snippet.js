@@ -17,7 +17,7 @@ export const Snippet = () => {
           <script>${js}</script>
         </html>
       `)
-    }, 1000)
+    }, 250)
 
     return () => clearTimeout(timeout)
   }, [html, css, js])
@@ -57,4 +57,6 @@ export const Snippet = () => {
     </>
   )
 }
+
+
 

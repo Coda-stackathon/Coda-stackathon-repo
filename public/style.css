@@ -52,6 +52,10 @@ a {
   align-items: baseline;
 }
 
+#title h1, #title h3 {
+  color: white;
+}
+
 .header h1 {
   font-size: 48px;
   margin-right: 25px;

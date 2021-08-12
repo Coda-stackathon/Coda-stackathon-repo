@@ -6,7 +6,7 @@ const { models: { Snippet }} = require('../db')
 router.get('/', async (req, res, next) => {
     try {
         const snippets = await Snippet.findAll({ where: { visibility: 'public' } })
-        res.json(snippets)
+        res.send(snippets)
     } catch (err) {
         next(err)
     }
