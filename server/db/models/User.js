@@ -3,18 +3,36 @@ const db = require('../db')
 const jwt = require('jsonwebtoken')
 const bcrypt = require('bcrypt');
 const axios = require('axios');
+const Group = require('./Group');
 
 const SALT_ROUNDS = 5;
 
 const User = db.define('user', {
+
   username: {
     type: Sequelize.STRING,
     unique: true,
     allowNull: false
   },
+
+  email: {
+    type: Sequelize.STRING,
+    unique: true,
+    allowNull: false,
+    validate: {
+      isEmail: true
+    }
+  },
+
   password: {
     type: Sequelize.STRING,
+  },
+
+  isAdmin: {
+    type: Sequelize.BOOLEAN,
+    defaultValue: false
   }
+
 })
 
 module.exports = User
@@ -69,6 +87,13 @@ const hashPassword = async(user) => {
   }
 }
 
+const createGroup = async(user) => {
+  const group = await Group.create()
+  await user.addGroup(group)
+}
+
+
 User.beforeCreate(hashPassword)
+User.afterCreate(createGroup)
 User.beforeUpdate(hashPassword)
 User.beforeBulkCreate(users => Promise.all(users.map(hashPassword)))
