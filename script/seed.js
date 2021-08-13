@@ -1,6 +1,109 @@
 'use strict'
 
-const {db, models: {User, Snippet} } = require('../server/db')
+const {db, models: {User, Snippet, Group} } = require('../server/db')
+
+const cHTML = `
+<div>
+  <div>
+    <input type="checkbox" />
+    <input type="checkbox" />
+    <input type="checkbox" />
+    <input type="checkbox" />
+    <input type="checkbox" />
+    <input type="checkbox" />
+    <input type="checkbox" />
+    <input type="checkbox" />
+  </div>
+  <div>
+    <input type="checkbox" />
+    <input type="checkbox" />
+    <input type="checkbox" />
+    <input type="checkbox" />
+    <input type="checkbox" />
+    <input type="checkbox" />
+    <input type="checkbox" />
+    <input type="checkbox" />
+  </div>
+  <div>
+    <input type="checkbox" />
+    <input type="checkbox" />
+    <input type="checkbox" />
+    <input type="checkbox" />
+    <input type="checkbox" />
+    <input type="checkbox" />
+    <input type="checkbox" />
+    <input type="checkbox" />
+  </div>
+</div>
+`
+
+const cCSS = `
+body > div {
+  text-align: center;
+  margin-top: 4rem;
+  > div {
+    + div {
+      margin-top: 1rem;
+    }
+  }
+}
+`
+const cJS = `
+console.clear();
+
+// UPDATE: there is a problem in chrome with starting audio context
+//  before a user gesture. This fixes it.
+document.documentElement.addEventListener('mousedown', () => {
+  if (Tone.context.state !== 'running') Tone.context.resume();
+});
+
+const synths = [
+  new Tone.Synth(),
+  new Tone.Synth(),
+  new Tone.Synth()
+];
+
+synths[0].oscillator.type = 'triangle';
+synths[1].oscillator.type = 'sine';
+synths[2].oscillator.type = 'sawtooth';
+
+const gain = new Tone.Gain(0.6);
+gain.toMaster();
+
+synths.forEach(synth => synth.connect(gain));
+
+const $rows = document.body.querySelectorAll('div > div'),
+      notes = ['G5', 'E4', 'C3'];
+let index = 0;
+
+Tone.Transport.scheduleRepeat(repeat, '8n');
+Tone.Transport.start();
+
+function repeat(time) {
+  let step = index % 8;
+  for (let i = 0; i < $rows.length; i++) {
+    let synth = synths[i],
+        note = notes[i],
+        $row = $rows[i],
+        $input = $row.querySelector(\`input:nth-child(\${step + 1})\`);
+    if ($input.checked) synth.triggerAttackRelease(note, '8n', time);
+  }
+  index++;
+}
+
+`
+
+
+
+
+
+
+
+
+
+
+
+
 
 /**
  * seed - this function clears the database, updates tables to
@@ -16,7 +119,11 @@ async function seed() {
     User.create({ username: 'murphy', email: 'murphy@email.com', password: '123' }),
   ])
 
-  const snippet = await Snippet.create({name: "hello world"})
+  const snippet = await Snippet.create({name: "hello world", contentHTML: cHTML, contentCSS: cCSS, contentJS: cJS})
+
+  const usergroups = await users[0].getGroups()
+
+  await usergroups[0].addSnippet(snippet)
 
   console.log(`seeded ${users.length} users`)
   console.log(`seeded successfully`)

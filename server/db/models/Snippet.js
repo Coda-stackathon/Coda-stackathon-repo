@@ -14,7 +14,7 @@ const Snippet = db.define('snippet', {
 
   visibility: {
       type: Sequelize.ENUM('public', 'private'),
-      defaultValue: 'private'
+      defaultValue: 'public'
   },
 
   contentHTML: {

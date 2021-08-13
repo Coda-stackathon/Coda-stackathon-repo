@@ -14,7 +14,13 @@ export const Snippet = () => {
         <html>
           <body>${html}</body>
           <style>${css}</style>
-          <script>${js}</script>
+          <script>
+          const npm = p => import(\`https://unpkg.com/\${p}?module\`);
+          (async () => {
+          const Tone = await npm('tone');
+           ${js}
+          })()
+          </script>
         </html>
       `)
     }, 1000)
