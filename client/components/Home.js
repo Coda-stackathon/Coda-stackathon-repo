@@ -32,7 +32,7 @@ export const Home = (props) => {
   return (
     <div className="parent-div">
       <div className="greeting">
-        <h3>user: {username}</h3>
+        {username && (<h3>user: {username}</h3>)}
       </div>
       <div className="links-sidebar">
         <h2 id="sidebar-header">snippets</h2>

@@ -1,13 +1,14 @@
 import React from 'react';
 import { connect } from 'react-redux'
 import Editor from './Editor'
-import { fetchSnippet } from '../../store/snippets';
+import { fetchSnippet, saveSnippet } from '../../store/snippets';
 
 class SingleSnippet extends React.Component {
 
   constructor() {
     super()
     this.handleChange = this.handleChange.bind(this)
+    this.handleSave = this.handleSave.bind(this)
     this.state = {
       snippet: {},
       html: '',
@@ -18,10 +19,14 @@ class SingleSnippet extends React.Component {
   }
 
   async componentDidMount() {
-    const snippet = await this.props.getSnippet(this.props.match.params.id)
+    const { snippets } = await this.props.getSnippet(this.props.match.params.id)
     this.setState({
-      snippet
+      html: snippets[0].contentHTML,
+      css: snippets[0].contentCSS,
+      js: snippets[0].contentJS,
+      snippet: snippets
     })
+    this.setSrcDoc()
   }
 
 
@@ -37,12 +42,30 @@ class SingleSnippet extends React.Component {
          <html>
            <body>${this.state.html}</body>
            <style>${this.state.css}</style>
-           <script>${this.state.js}</script>
+           <script>
+           const npm = p => import(\`https://unpkg.com/\${p}?module\`);
+          (async () => {
+            const Tone = await npm('tone');
+           ${this.state.js}
+          })()
+           </script>
          </html>
        `
        this.setState({
          srcDoc
        })
+  }
+
+  async handleSave() {
+    console.log('We are saving')
+    const snippetInfo = {
+      name: 'THIS IS A SNIPPET\'S NAME!',
+      contentHTML: this.state.html,
+      contentCSS: this.state.css,
+      contentJS: this.state.js,
+    }
+    const newSnip = await this.props.saveSnippet(snippetInfo)
+    console.log("THIS SHOULD BE A NEW SNIP: ", newSnip)
   }
 
   render() {
@@ -56,6 +79,7 @@ class SingleSnippet extends React.Component {
     return  (
         snippet ? (
           <>
+          <button onClick={this.handleSave}>Save</button>
           <h2>{snippet.name}</h2>
           <div className="pane top-pane">
             <Editor
@@ -93,11 +117,13 @@ class SingleSnippet extends React.Component {
 }
 
 const mapStateToProps = (state) => ({
-  snippet: state.snippets
+  snippet: state.snippets,
+  synths: state.synths
 })
 
 const mapDispatchToProps = dispatch => ({
-  getSnippet: (id) => dispatch(fetchSnippet(id))
+  getSnippet: (id) => dispatch(fetchSnippet(id)),
+  saveSnippet: (snippetInfo) => dispatch(saveSnippet(snippetInfo))
 })
 
 
