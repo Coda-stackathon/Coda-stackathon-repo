@@ -11,6 +11,8 @@ import {
   MenuItem,
   FormControl,
 } from "@material-ui/core";
+import Coda from '../../Coda objects/Coda'
+
 
 const customStyles = {
   content: {
@@ -80,6 +82,7 @@ class SingleSnippet extends React.Component {
            const npm = p => import(\`https://unpkg.com/\${p}?module\`);
           (async () => {
             const Tone = await npm('tone');
+            ${Coda}
            ${this.state.js}
           })()
            </script>
@@ -102,6 +105,8 @@ class SingleSnippet extends React.Component {
     };
     const newSnip = await this.props.saveSnippet(snippetInfo);
     this.setState({ modalOpen: false });
+    console.log(newSnip.snippets[0].id)
+    this.props.history.push(`/snippets/${newSnip.snippets[0].id}`)
   }
 
   afterOpenModal() {
