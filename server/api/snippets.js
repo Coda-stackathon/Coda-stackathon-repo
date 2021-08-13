@@ -24,10 +24,9 @@ router.get('/:id', async (req, res, next) => {
 
 router.post('/', requireToken, async (req, res, next) => {
     try {
-        console.log('THIS SHOULD BE THE USER: ', req.user)
-        const { name, contentHTML, contentCSS, contentJS } = req.body
+        const { name, contentHTML, contentCSS, contentJS, group } = req.body
         const user = req.user
-        const groups = await user.getGroups();
+        const groups = await user.getGroups({where: {id: group}});
         const snippet = await Snippet.create({name, contentHTML, contentJS, contentCSS})
         await groups[0].addSnippet(snippet)
         res.send(snippet)
