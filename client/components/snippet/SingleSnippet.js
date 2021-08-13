@@ -39,6 +39,7 @@ class SingleSnippet extends React.Component {
     this.openModal = this.openModal.bind(this);
     this.modalForm = this.modalForm.bind(this);
     this.handleFormChange = this.handleFormChange.bind(this);
+    this.setSrcDoc = this.setSrcDoc.bind(this)
 
     this.state = {
       snippet: {},
@@ -62,14 +63,12 @@ class SingleSnippet extends React.Component {
       js: snippets[0].contentJS,
       snippet: snippets,
     });
-    this.setSrcDoc();
   }
 
   handleChange(value, type) {
     this.setState({
       [type]: value,
     });
-    this.setSrcDoc();
   }
 
   setSrcDoc() {
@@ -210,6 +209,7 @@ class SingleSnippet extends React.Component {
         <h2>{snippet.name}</h2>
         {!this.state.modalOpen && (
           <React.Fragment>
+            <Button onClick={this.setSrcDoc}>Run</Button>
             <div className="pane top-pane">
               <Editor
                 language="xml"
