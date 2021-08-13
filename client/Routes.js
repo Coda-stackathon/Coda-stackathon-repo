@@ -9,6 +9,7 @@ import { Amatrix } from "./components/Amatrix";
 import { Snippet } from './components/snippet/Snippet'
 import AllSnippets from './components/snippet/AllSnippets'
 import SingleSnippet from "./components/snippet/SingleSnippet";
+import ListGroups from "./components/groups/ListGroups";
 import { me } from "./store";
 
 /**
@@ -40,6 +41,7 @@ class Routes extends Component {
           <Route path="/snippet" component={Snippet} />
           <Route exact path="/snippets" component={AllSnippets} />
           <Route path="/snippets/:id" component={SingleSnippet} />
+          <Route path="/groups" component={ListGroups} />
           <Route exact path="/">
             <Redirect to="/home" />
           </Route>
