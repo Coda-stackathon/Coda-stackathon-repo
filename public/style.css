@@ -265,7 +265,7 @@ form div {
   cursor: pointer;
 }
 
-.editor-title {
+/* .editor-title {
   display: flex;
   justify-content: space-between;
   background-color: hsl(225, 6%, 13%);
@@ -273,6 +273,17 @@ form div {
   padding: .5rem .5rem .5rem 1rem;
   border-top-right-radius: .5rem;
   border-top-left-radius: .5rem;
+} */
+
+.editor-title {
+  display: flex;
+  justify-content: space-between;
+  background-color: hsl(222, 7%, 73%);
+  /* color: rgb(39, 39, 230); */
+  color: white;
+  padding: .5rem .5rem .5rem 1rem;
+  border: solid gray 1px;
+  box-shadow: 3px  3px 1px gray;
 }
 
 .CodeMirror {
@@ -281,7 +292,10 @@ form div {
 
 .code-mirror-wrapper {
   flex-grow: 1;
-  border-bottom-right-radius: .5rem;
-  border-bottom-left-radius: .5rem;
+  /* border-bottom-right-radius: .5rem;
+  border-bottom-left-radius: .5rem; */
+  border: solid gray 1px;
+  border-top: none;
   overflow: hidden;
+  box-shadow: 3px  3px 1px gray;
 }
