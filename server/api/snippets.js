@@ -28,7 +28,7 @@ router.post('/', requireToken, async (req, res, next) => {
         const { name, contentHTML, contentCSS, contentJS } = req.body
         const user = req.user
         const groups = await user.getGroups();
-        const snippet = await Snippet.create(name, contentHTML, contentJS, contentCSS)
+        const snippet = await Snippet.create({name, contentHTML, contentJS, contentCSS})
         await groups[0].addSnippet(snippet)
         res.send(snippet)
     } catch (err) {

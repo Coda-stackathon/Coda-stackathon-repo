@@ -38,7 +38,7 @@ export const fetchSnippet = (id) => {
 export const saveSnippet = (snippetInfo) => {
     return async dispatch => {
         try {
-            const { data } = await axios.post('/api/snippets', snippetInfo)
+            const { data } = await axios.post('/api/snippets', snippetInfo, {headers:{authorization: window.localStorage.getItem('token')}})
             return dispatch(_setSnippets([data]))
         } catch (err) {
             console.log(err)

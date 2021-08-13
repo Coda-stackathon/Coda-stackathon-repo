@@ -25,10 +25,10 @@ class Routes extends Component {
     return (
       <div>
         <Switch>
+          <React.Fragment>
           {!isLoggedIn && (
             <>
-              <Route path="/home" component={Home} />
-              <Route path="/" exact component={Login} />
+              <Route exact path="/" component={Login} />
               <Route path="/login" component={Login} />
               <Route path="/signup" component={Signup} />
             </>
@@ -40,9 +40,10 @@ class Routes extends Component {
           <Route path="/snippet" component={Snippet} />
           <Route exact path="/snippets" component={AllSnippets} />
           <Route path="/snippets/:id" component={SingleSnippet} />
-          <Route path="/">
+          <Route exact path="/">
             <Redirect to="/home" />
           </Route>
+          </React.Fragment>
         </Switch>
       </div>
     );
