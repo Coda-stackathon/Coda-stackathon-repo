@@ -3,9 +3,6 @@ import axios from 'axios'
 
 const SET_SNIPPETS = 'SET_SNIPPETS'
 
-const SET_SNIPPET = 'SET_SNIPPET'
-
-
 // actions creator
 
 const _setSnippets = (snippets) => ({
@@ -17,7 +14,6 @@ const _setSnippets = (snippets) => ({
 // thunks
 
 export const fetchSnippets = () => {
-    console.log('snipper store')
     return async dispatch => {
         try {
             const { data } = await axios.get('/api/snippets')
@@ -31,8 +27,8 @@ export const fetchSnippets = () => {
 export const fetchSnippet = (id) => {
     return async dispatch => {
         try {
-            const { data } = await axios.get(`/api/snippet/${id}`)
-            return dispatch(_setSnippets(data))
+            const { data } = await axios.get(`/api/snippets/${id}`)
+            return dispatch(_setSnippets([data]))
         } catch (error) {
             console.log(error)
         }

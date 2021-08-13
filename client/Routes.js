@@ -8,6 +8,7 @@ import { BinaryTree } from "./components/BinaryTree";
 import { Amatrix } from "./components/Amatrix";
 import { Snippet } from './components/snippet/Snippet'
 import AllSnippets from './components/snippet/AllSnippets'
+import SingleSnippet from "./components/snippet/SingleSnippet";
 import { me } from "./store";
 
 /**
@@ -36,11 +37,13 @@ class Routes extends Component {
           </Switch>
         )}
         <Switch>
+          <Route path="/home" component={Home} />
           <Route path="/loops" component={Loops} />
           <Route path="/binaryTree" component={BinaryTree} />
           <Route path="/aMatrix" component={Amatrix} />
           <Route path="/snippet" component={Snippet} />
-          <Route path="/snippets" component={AllSnippets} />
+          <Route exact path="/snippets" component={AllSnippets} />
+          <Route path="/snippets/:id" component={SingleSnippet} />
         </Switch>
       </div>
     );
