@@ -227,7 +227,7 @@ class SingleSnippet extends React.Component {
     const srcDoc = this.state.srcDoc;
     const snippet = this.props.snippet[0];
     const groupIds = this.props.user.id && this.props.user.groups.map(group => (group.id))
-    const userGroupValidation = groupIds && groupIds.includes(snippet.groupId)
+    const userGroupValidation = (groupIds && snippet) && groupIds.includes(snippet.groupId)
     console.log(`userGroupValidation`, userGroupValidation)
     return snippet ? (
       <>
