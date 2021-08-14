@@ -27,6 +27,10 @@ Coda.prototype.newSynth = function(type) {
     return new instrument(type)
 }
 
+Coda.prototype.newSequence = function(noteLength) {
+    return new sequence(noteLength)
+}
+
 class instrument {
 
     constructor(type) {
@@ -45,31 +49,45 @@ class instrument {
     }
 }
 
-instrument.prototype.playNote = function(note, length) {
-    this.holder.triggerAttackRelease(note, length)
+instrument.prototype.playNote = function(note, length, time = Tone.now()) {
+    this.holder.triggerAttackRelease(note, length, time)
 }
 
 class sequence {
-    constructor() {
+    constructor(noteLength) {
         this.notes = []
-        this.lengths = []
+        this.noteLength = noteLength
     }
 }
 
-sequence.prototype.addNote = function(note, length = '8n') {
+sequence.prototype.addNote = function(note) {
+    console.log('adding note to sequence')
     this.notes.push(note)
-    this.lengths.push(length)
 }
 
-sequence.prototype.addNotes = function(notesArr, lengthArr) {
+sequence.prototype.addNotes = function(notesArr) {
+    console.log('adding notes to sequence')
     this.notes = [...this.notes, ...notesArr]
-    this.lengthArr = [...this.notes, ...lengthArr]
 }
 
-sequence.prototype.setNotes = function(notesArr, lengthArr) {
+sequence.prototype.setNotes = function(notesArr) {
+    console.log('setting notes in sequence')
     this.notes = notesArr
-    this.lengths = lengthArr
 }
+
+sequence.prototype.startTransport = function(instrument) {
+
+    const seq = new Tone.Sequence((time, note) => {
+        if (note !== 'rest') {
+            instrument.playNote(note, this.noteLength, time);
+        }
+        // subdivisions are given as subarrays
+    }, this.notes, this.noteLength).start(0);
+
+    Tone.Transport.start();
+
+}
+
 
 const coda = new Coda()
 `
