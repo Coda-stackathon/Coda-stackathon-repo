@@ -12,6 +12,7 @@ import {
   FormControl,
 } from "@material-ui/core";
 import Coda from '../../Coda objects/Coda'
+import { loadingHtml, loadingCss, loadingJs } from "../../Coda objects/loading";
 
 
 const customStyles = {
@@ -36,6 +37,7 @@ class SingleSnippet extends React.Component {
 
     this.handleChange = this.handleChange.bind(this);
     this.handleSave = this.handleSave.bind(this);
+    this.handleSaveAs = this.handleSaveAs.bind(this)
     this.afterOpenModal = this.afterOpenModal.bind(this);
     this.closeModal = this.closeModal.bind(this);
     this.openModal = this.openModal.bind(this);
@@ -79,13 +81,14 @@ class SingleSnippet extends React.Component {
     });
     const srcDoc = `
          <html>
-           <body>${this.state.html}</body>
-           <style>${this.state.css}</style>
+           <body>${this.state.html} ${loadingHtml}</body>
+           <style>${this.state.css} ${loadingCss}</style>
            <script>
            const npm = p => import(\`https://unpkg.com/\${p}?module\`);
           (async () => {
             const Tone = await npm('tone');
             ${Coda}
+            ${loadingJs}
            ${this.state.js}
           })()
            </script>
@@ -94,9 +97,10 @@ class SingleSnippet extends React.Component {
     this.setState({
       srcDoc,
     });
+    console.log(`srcdoc`, srcDoc)
   }
 
-  async handleSave(event) {
+  async handleSaveAs(event) {
     event.preventDefault();
     const snippetInfo = {
       name: this.state.name,
@@ -106,22 +110,24 @@ class SingleSnippet extends React.Component {
       group: this.state.group,
       id: this.props.match.params.id
     };
-
-    // gets all the group ids the current user is a part of
-    const groupIds = this.props.user.groups.map(group => (group.id))
-    let newSnip;
-    //check if the user is a part of the group and has access to the snip
-    if (groupIds.includes(this.state.snippet[0].groupId)) {
-      // this will update the snip in the database
-      newSnip = await this.props.updateSnippet(snippetInfo)
-    } else {
-      // this will save a new version to the database
-      newSnip = await this.props.saveSnippet(snippetInfo);
-    }
+    const newSnip = await this.props.saveSnippet(snippetInfo);
     this.setState({ modalOpen: false });
-    console.log(newSnip.snippets[0].id)
     this.props.history.push(`/snippets/${newSnip.snippets[0].id}`)
   }
+
+  async handleSave(event) {
+    event.preventDefault();
+    const snippetInfo = {
+      name: this.state.snippet[0].name,
+      contentHTML: this.state.html,
+      contentCSS: this.state.css,
+      contentJS: this.state.js,
+      group: this.state.group,
+      id: this.props.match.params.id
+    };
+    await this.props.updateSnippet(snippetInfo)
+  }
+
 
   afterOpenModal() {
     // references are now sync'd and can be accessed.
@@ -166,7 +172,7 @@ class SingleSnippet extends React.Component {
           <Button onClick={this.closeModal}>close</Button>
         </div>
         {this.props.user.id && (
-          <form onSubmit={this.handleSave}>
+          <form onSubmit={this.handleSaveAs}>
             <FormControl style={{ marginTop: "50px" }}>
               <InputLabel
                 style={{ transform: "translateX(15px)", fontSize: "12px" }}
@@ -222,10 +228,13 @@ class SingleSnippet extends React.Component {
     const js = this.state.js;
     const srcDoc = this.state.srcDoc;
     const snippet = this.props.snippet[0];
-
+    const groupIds = this.props.user.id && this.props.user.groups.map(group => (group.id))
+    const userGroupValidation = groupIds && groupIds.includes(snippet.groupId)
+    console.log(`userGroupValidation`, userGroupValidation)
     return snippet ? (
       <>
-        <button onClick={this.openModal}>Save</button>
+        {userGroupValidation && <button onClick={this.handleSave}>Save</button>} 
+        {this.props.user.id && <button onClick={this.openModal}>Save as</button>}
         {this.modalForm()}
         <h2>{snippet.name}</h2>
         {!this.state.modalOpen && (
