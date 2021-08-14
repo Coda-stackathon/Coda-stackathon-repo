@@ -74,6 +74,9 @@ class SingleSnippet extends React.Component {
   }
 
   setSrcDoc() {
+    this.setState({
+      srcDoc: '',
+    });
     const srcDoc = `
          <html>
            <body>${this.state.html}</body>
