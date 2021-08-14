@@ -1,7 +1,7 @@
 import React from "react";
 import { connect } from "react-redux";
 import Editor from "./Editor";
-import { fetchSnippet, saveSnippet } from "../../store/snippets";
+import { fetchSnippet, saveSnippet, updateSnippet } from "../../store/snippets";
 import Modal from "react-modal";
 import {
   Button,
@@ -95,15 +95,26 @@ class SingleSnippet extends React.Component {
 
   async handleSave(event) {
     event.preventDefault();
-    console.log(this.props.user);
     const snippetInfo = {
       name: this.state.name,
       contentHTML: this.state.html,
       contentCSS: this.state.css,
       contentJS: this.state.js,
-      group: this.state.group
+      group: this.state.group,
+      id: this.props.match.params.id
     };
-    const newSnip = await this.props.saveSnippet(snippetInfo);
+
+    // gets all the group ids the current user is a part of
+    const groupIds = this.props.user.groups.map(group => (group.id))
+    let newSnip;
+    //check if the user is a part of the group and has access to the snip
+    if (groupIds.includes(this.state.snippet[0].groupId)) {
+      // this will update the snip in the database
+      newSnip = await this.props.updateSnippet(snippetInfo)
+    } else {
+      // this will save a new version to the database
+      newSnip = await this.props.saveSnippet(snippetInfo);
+    }
     this.setState({ modalOpen: false });
     console.log(newSnip.snippets[0].id)
     this.props.history.push(`/snippets/${newSnip.snippets[0].id}`)
@@ -116,6 +127,8 @@ class SingleSnippet extends React.Component {
   }
 
   openModal() {
+    const groupIds = this.props.user.groups.map(group => (group.id))
+    console.log("Conditional", groupIds.includes(this.state.snippet[0].groupId))
     this.setState({ modalOpen: true });
   }
 
@@ -263,6 +276,7 @@ const mapStateToProps = (state) => ({
 const mapDispatchToProps = (dispatch) => ({
   getSnippet: (id) => dispatch(fetchSnippet(id)),
   saveSnippet: (snippetInfo) => dispatch(saveSnippet(snippetInfo)),
+  updateSnippet: (snippetInfo) => dispatch(updateSnippet(snippetInfo))
 });
 
 export default connect(mapStateToProps, mapDispatchToProps)(SingleSnippet);

@@ -35,4 +35,17 @@ router.post('/', requireToken, async (req, res, next) => {
     }
 })
 
+
+router.put('/:id', requireToken, async (req, res, next) => {
+    try {
+        const { name, contentHTML, contentCSS, contentJS, group } = req.body
+        const snippet = await Snippet.findByPk(req.params.id)
+        snippet.update({name, contentHTML, contentJS, contentCSS, groupId: group})
+        res.send(snippet)
+    } catch (err) {
+        next(err)
+    }
+})
+
+
 module.exports = router
