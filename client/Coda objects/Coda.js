@@ -49,6 +49,27 @@ instrument.prototype.playNote = function(note, length) {
     this.holder.triggerAttackRelease(note, length)
 }
 
+class sequence {
+    constructor() {
+        this.notes = []
+        this.lengths = []
+    }
+}
+
+sequence.prototype.addNote = function(note, length = '8n') {
+    this.notes.push(note)
+    this.lengths.push(length)
+}
+
+sequence.prototype.addNotes = function(notesArr, lengthArr) {
+    this.notes = [...this.notes, ...notesArr]
+    this.lengthArr = [...this.notes, ...lengthArr]
+}
+
+sequence.prototype.setNotes = function(notesArr, lengthArr) {
+    this.notes = notesArr
+    this.lengths = lengthArr
+}
 
 const coda = new Coda()
 `
