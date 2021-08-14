@@ -12,6 +12,7 @@ import {
   FormControl,
 } from "@material-ui/core";
 import Coda from '../../Coda objects/Coda'
+import { loadingHtml, loadingCss, loadingJs } from "../../Coda objects/loading";
 
 
 const customStyles = {
@@ -77,13 +78,14 @@ class SingleSnippet extends React.Component {
   setSrcDoc() {
     const srcDoc = `
          <html>
-           <body>${this.state.html}</body>
-           <style>${this.state.css}</style>
+           <body>${this.state.html} ${loadingHtml}</body>
+           <style>${this.state.css} ${loadingCss}</style>
            <script>
            const npm = p => import(\`https://unpkg.com/\${p}?module\`);
           (async () => {
             const Tone = await npm('tone');
             ${Coda}
+            ${loadingJs}
            ${this.state.js}
           })()
            </script>
@@ -92,6 +94,7 @@ class SingleSnippet extends React.Component {
     this.setState({
       srcDoc,
     });
+    console.log(`srcdoc`, srcDoc)
   }
 
   async handleSaveAs(event) {
@@ -223,8 +226,8 @@ class SingleSnippet extends React.Component {
     const srcDoc = this.state.srcDoc;
     const snippet = this.props.snippet[0];
     const groupIds = this.props.user.id && this.props.user.groups.map(group => (group.id))
-    const userGroupValidation = groupIds && groupIds.includes(this.state.snippet[0].groupId)
-
+    const userGroupValidation = groupIds && groupIds.includes(snippet.groupId)
+    console.log(`userGroupValidation`, userGroupValidation)
     return snippet ? (
       <>
         {userGroupValidation && <button onClick={this.handleSave}>Save</button>} 
