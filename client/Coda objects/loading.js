@@ -7,8 +7,10 @@ export const loadingHtml = `<div class="spinner">
 <h1>Loading Coda</h1>
 </div>`
 
-export const loadingCss = `.hidden {
-    opacity: 0
+export const loadingCss = `
+
+  .hidden {
+    display: none;
   }
   
   .spinner {

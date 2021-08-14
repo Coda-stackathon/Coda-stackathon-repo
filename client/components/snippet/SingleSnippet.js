@@ -76,28 +76,26 @@ class SingleSnippet extends React.Component {
   }
 
   setSrcDoc() {
-    this.setState({
-      srcDoc: '',
-    });
+    const jsWithSpace = this.state.js + ' ';
     const srcDoc = `
          <html>
-           <body>${this.state.html} ${loadingHtml}</body>
-           <style>${this.state.css} ${loadingCss}</style>
+           <body>${loadingHtml} ${this.state.html}</body>
+           <style>${loadingCss} ${this.state.css}</style>
            <script>
            const npm = p => import(\`https://unpkg.com/\${p}?module\`);
           (async () => {
             const Tone = await npm('tone');
-            ${Coda}
             ${loadingJs}
-           ${this.state.js}
+            ${Coda}
+           ${jsWithSpace}
           })()
            </script>
          </html>
-       `;
+       `
     this.setState({
       srcDoc,
+      js: jsWithSpace
     });
-    console.log(`srcdoc`, srcDoc)
   }
 
   async handleSaveAs(event) {

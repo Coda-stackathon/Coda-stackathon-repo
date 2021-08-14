@@ -84,7 +84,6 @@ sequence.prototype.startTransport = function(instrument) {
         // subdivisions are given as subarrays
     }, this.notes, this.noteLength).start(0);
 
-    Tone.Transport.start();
 
 }
 
