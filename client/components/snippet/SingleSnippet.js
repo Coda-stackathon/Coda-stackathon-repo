@@ -232,7 +232,7 @@ class SingleSnippet extends React.Component {
     return snippet ? (
       <>
         {userGroupValidation && <button onClick={this.handleSave}>Save</button>} 
-        {this.props.user.id && <button onClick={this.openModal}>Save as</button>}
+        {this.props.user.id && <button onClick={this.openModal}>Save a copy</button>}
         {this.modalForm()}
         <h2>{snippet.name}</h2>
         {!this.state.modalOpen && (
