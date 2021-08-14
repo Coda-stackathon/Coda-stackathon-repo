@@ -15,8 +15,8 @@ class AllSnippets extends React.Component{
     render () {
         console.log(`this.props.snippets`, this.props.snippets)
         return (
-            <div>
-               {this.props.snippets.map(snippet => <Link to={`/snippets/${snippet.id}`} key={snippet.id}><div className="all-snippets-snippet">{snippet.name}</div></Link>)}
+            <div id="snippets-container">
+               {this.props.snippets.map(snippet => <Link to={`/snippets/${snippet.id}`} key={snippet.id}><div className="all-snippets-snippet"><p>{snippet.name}</p></div></Link>)}
             </div>
         )
     }

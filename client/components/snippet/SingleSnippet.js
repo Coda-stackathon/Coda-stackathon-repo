@@ -14,7 +14,6 @@ import {
 import Coda from '../../Coda objects/Coda'
 import { loadingHtml, loadingCss, loadingJs } from "../../Coda objects/loading";
 
-
 const customStyles = {
   content: {
     top: "50%",
@@ -231,13 +230,17 @@ class SingleSnippet extends React.Component {
     console.log(`userGroupValidation`, userGroupValidation)
     return snippet ? (
       <>
-        {userGroupValidation && <button onClick={this.handleSave}>Save</button>} 
-        {this.props.user.id && <button onClick={this.openModal}>Save as</button>}
+        <div className="save-buttons">
+        {userGroupValidation && <Button variant="outlined" onClick={this.handleSave} style={{"margin-right": "10px"}}>Save</Button>} 
+        {this.props.user.id && <Button variant="outlined" onClick={this.openModal} style={{"margin-right": "10px"}}>Save a copy</Button>}
+        </div>
         {this.modalForm()}
-        <h2>{snippet.name}</h2>
+            <div className="run-button-and-name">
+        <h2 className='snippet-name'>{snippet.name}</h2>
+            <Button variant="outlined" onClick={this.setSrcDoc} style={{"height":"50px"}}>RUN</Button>
+            </div>
         {!this.state.modalOpen && (
           <React.Fragment>
-            <Button onClick={this.setSrcDoc}>Run</Button>
             <div className="pane top-pane">
               <Editor
                 language="xml"

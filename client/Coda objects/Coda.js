@@ -1,4 +1,5 @@
 import Tone from "tone"
+import { piano }  from "./piano"
 
 const Coda = `class Coda {
     constructor () {
@@ -15,8 +16,13 @@ const Coda = `class Coda {
             polySynth: new instrument('polySynth'),
             metalSynth: new instrument('metalSynth'),
             pluckSynth: new instrument('pluckSynth'),
+            piano: new instrument('piano'),
         }
     }
+}
+
+Coda.prototype.getInstrument = function(type) {
+    return (this.instrument[type])
 }
 
 Coda.prototype.getSynth = function(type) {
@@ -43,6 +49,7 @@ class instrument {
             case 'polySynth': holder = new Tone.PolySynth().toDestination(); break;
             case 'metalSynth': holder = new Tone.MetalSynth().toDestination(); break;
             case 'pluckSynth': holder = new Tone.PluckSynth().toDestination(); break;
+            case 'piano': holder = ${piano}; break;
             default: holder = new Tone.Synth().toDestination();
         }
         this.holder = holder
@@ -51,7 +58,7 @@ class instrument {
 
 instrument.prototype.playNote = function(note, length, time = Tone.now()) {
     this.holder.triggerAttackRelease(note, length, time)
-}
+} 
 
 class sequence {
     constructor(noteLength) {
@@ -75,8 +82,8 @@ sequence.prototype.setNotes = function(notesArr) {
     this.notes = notesArr
 }
 
-sequence.prototype.startTransport = function(instrument) {
-
+sequence.prototype.play = function(instrument) {
+    Tone.Transport.cancel(0)
     const seq = new Tone.Sequence((time, note) => {
         if (note !== 'rest') {
             instrument.playNote(note, this.noteLength, time);
@@ -84,11 +91,16 @@ sequence.prototype.startTransport = function(instrument) {
         // subdivisions are given as subarrays
     }, this.notes, this.noteLength).start(0);
 
-
+    Tone.Transport.start()
 }
 
+sequence.prototype.stop = function() {
+    Tone.Transport.stop()
+}
 
 const coda = new Coda()
 `
 
 export default Coda
+
+
