@@ -11,7 +11,7 @@ import {
   MenuItem,
   FormControl,
 } from "@material-ui/core";
-import Coda from '../../Coda objects/Coda'
+import Coda, { instrumentList } from '../../Coda objects/Coda'
 import { loadingHtml, loadingCss, loadingJs } from "../../Coda objects/loading";
 
 const customStyles = {
@@ -44,6 +44,11 @@ class SingleSnippet extends React.Component {
     this.handleFormChange = this.handleFormChange.bind(this);
     this.setSrcDoc = this.setSrcDoc.bind(this)
 
+    this.afterOpenModalAdd = this.afterOpenModalAdd.bind(this);
+    this.closeModalAdd = this.closeModalAdd.bind(this);
+    this.openModalAdd = this.openModalAdd.bind(this);
+    this.modalAddForm = this.modalAddForm.bind(this);
+
     this.state = {
       snippet: {},
       html: "",
@@ -51,6 +56,7 @@ class SingleSnippet extends React.Component {
       js: "",
       srcDoc: "",
       modalOpen: false,
+      modalAddOpen: false,
       group: "",
       name: "",
     };
@@ -150,6 +156,91 @@ class SingleSnippet extends React.Component {
     this.setState({ [event.target.name]: event.target.value });
   }
 
+  afterOpenModalAdd() {
+    // references are now sync'd and can be accessed.
+    subtitle.style.color = "rgb(39, 39, 230)";
+    subtitle.style.fontFamily = "'Roboto Mono', monospace";
+  }
+
+  openModalAdd() {
+    const groupIds = this.props.user.groups.map(group => (group.id))
+    console.log("Conditional", groupIds.includes(this.state.snippet[0].groupId))
+    this.setState({ modalAddOpen: true });
+  }
+
+  closeModalAdd() {
+    this.setState({ modalAddOpen: false });
+  }
+
+  modalAddForm() {
+    return (
+      <Modal
+        isOpen={this.state.modalAddOpen}
+        onAfterOpen={this.afterOpenModalAdd}
+        onRequestClose={this.closeModalAdd}
+        style={customStyles}
+        contentLabel="Example Modal"
+      >
+        <div
+          style={{
+            display: "flex",
+            justifyContent: "space-between",
+          }}
+        >
+          <h2 ref={(_subtitle) => (subtitle = _subtitle)}>Save Snippet</h2>
+          <Button onClick={this.closeModalAdd}>close</Button>
+        </div>
+        {this.props.user.id && (
+          <form onSubmit={this.handleSaveAs}>
+            <FormControl style={{ marginTop: "50px" }}>
+              <InputLabel
+                style={{ transform: "translateX(15px)", fontSize: "12px" }}
+                id="label"
+              >
+                Snippet name
+              </InputLabel>
+              <Input
+                variant="outlined"
+                name="name"
+                value={this.state.name}
+                onChange={this.handleFormChange}
+              />
+            </FormControl>
+            <FormControl style={{ marginTop: "50px" }}>
+              <InputLabel
+                style={{ transform: "translateX(15px)", fontSize: "12px" }}
+                id="label"
+              >
+                Snippet group
+              </InputLabel>
+              <Select
+                style={{ width: "150px" }}
+                labelId="label"
+                id="select"
+                value={this.state.group}
+                onChange={this.handleFormChange}
+                name="group"
+              >
+                {this.props.user.groups.map((group) => (
+                  <MenuItem value={group.id} key={group.id}>
+                    {group.name}
+                  </MenuItem>
+                ))}
+              </Select>
+              <Button
+                style={{ marginTop: "50px" }}
+                type="submit"
+                variant="outlined"
+              >
+                Confirm
+              </Button>
+            </FormControl>
+          </form>
+        )}
+      </Modal>
+    );
+  }
+
   modalForm() {
     return (
       <Modal
@@ -226,7 +317,7 @@ class SingleSnippet extends React.Component {
     const srcDoc = this.state.srcDoc;
     const snippet = this.props.snippet[0];
     const groupIds = this.props.user.id && this.props.user.groups.map(group => (group.id))
-    const userGroupValidation = groupIds && groupIds.includes(snippet.groupId)
+    const userGroupValidation = (groupIds && snippet) && groupIds.includes(snippet.groupId)
     console.log(`userGroupValidation`, userGroupValidation)
     return snippet ? (
       <>
@@ -235,10 +326,16 @@ class SingleSnippet extends React.Component {
         {this.props.user.id && <Button variant="outlined" onClick={this.openModal} style={{"margin-right": "10px"}}>Save a copy</Button>}
         </div>
         {this.modalForm()}
+   
+        {this.modalAddForm()}
+        {this.props.user.id && <button onClick={this.openModalAdd}>Add Instrument</button>}
+
+
             <div className="run-button-and-name">
         <h2 className='snippet-name'>{snippet.name}</h2>
             <Button variant="outlined" onClick={this.setSrcDoc} style={{"height":"50px"}}>RUN</Button>
             </div>
+
         {!this.state.modalOpen && (
           <React.Fragment>
             <div className="pane top-pane">
