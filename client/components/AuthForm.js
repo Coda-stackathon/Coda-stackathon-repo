@@ -10,13 +10,13 @@ const AuthForm = props => {
 
   return (
     <div>
-      <form onSubmit={handleSubmit} name={name}>
-        <div>
+      <form onSubmit={(event) => handleSubmit(event, props.history)} name={name}>
+        {name === 'signup' && <div>
           <label htmlFor="email">
             <small>Email</small>
           </label>
           <input name="email" type="email" />
-        </div>
+        </div>}
         <div>
           <label htmlFor="username">
             <small>Username</small>
@@ -63,13 +63,16 @@ const mapSignup = state => {
 
 const mapDispatch = dispatch => {
   return {
-    handleSubmit(evt) {
+    handleSubmit(evt, history) {
       evt.preventDefault()
       const formName = evt.target.name
       const username = evt.target.username.value
       const password = evt.target.password.value
-      const email    = evt.target.email.value
+      // this is to check if the user is logging in or signing up so that the email isn't required
+      let email = 'dummy'
+      if (evt.target.email) email = evt.target.email.value
       dispatch(authenticate(username, email, password, formName))
+      history.push('/home')
     }
   }
 }
