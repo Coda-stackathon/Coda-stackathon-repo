@@ -10,6 +10,7 @@ import { Snippet } from './components/snippet/Snippet'
 import AllSnippets from './components/snippet/AllSnippets'
 import SingleSnippet from "./components/snippet/SingleSnippet";
 import { me } from "./store";
+import ListGroups from "./components/ListGroups";
 
 /**
  * COMPONENT
@@ -38,6 +39,7 @@ class Routes extends Component {
           <Route path="/binaryTree" component={BinaryTree} />
           <Route path="/aMatrix" component={Amatrix} />
           <Route path="/snippet" component={Snippet} />
+          <Route path="/groups" component={ListGroups} />
           <Route exact path="/snippets" component={AllSnippets} />
           <Route path="/snippets/:id" component={SingleSnippet} />
           <Route exact path="/">

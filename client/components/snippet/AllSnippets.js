@@ -180,7 +180,7 @@ class AllSnippets extends React.Component {
 
   render() {
     return (
-      <div id="snippets-container">
+      <div className="snippets-container">
         {this.modalForm()}
         <div
           id="create-snippet-button"
