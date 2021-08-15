@@ -83,7 +83,6 @@ sequence.prototype.setNotes = function(notesArr) {
 }
 
 sequence.prototype.play = function(instrument) {
-    Tone.Transport.cancel(0)
     const seq = new Tone.Sequence((time, note) => {
         if (note !== 'rest') {
             instrument.playNote(note, this.noteLength, time);
@@ -96,6 +95,7 @@ sequence.prototype.play = function(instrument) {
 
 sequence.prototype.stop = function() {
     Tone.Transport.stop()
+    Tone.Transport.cancel(0)
 }
 
 const coda = new Coda()
