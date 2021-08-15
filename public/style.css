@@ -14,9 +14,12 @@
 body {
   font-family: sans-serif;
   margin: 0;
+  overflow-x: hidden;
 }
 
 .parent-div {
+  height: 100vh;
+  position: relative;
   margin: 10px;
 }
 
@@ -30,7 +33,6 @@ a {
 }
 
 .header {
-  width: 100%;
   font-family: "Roboto Mono", monospace;
   display: flex;
   align-items: baseline;
@@ -41,9 +43,9 @@ a {
   line-height: 0.5;
 }
 
-.navbar {
+/* .navbar {
   margin-right: 35px;
-}
+} */
 
 #title {
   display: flex;
@@ -105,9 +107,9 @@ form div {
 
 #hero-text {
   animation: 1s ease-in 0s 1 slideUp;
-  position: fixed;
-  left: 22%;
-  top: 20%;
+  position: absolute;
+  left: 25%;
+  top: 0%;
 }
 
 #hero-text h1 {
@@ -120,7 +122,9 @@ form div {
 }
 
 #get-started-button {
-  position: fixed;
+  z-index: 1;
+  background-color: white;
+  position: absolute;
   left: 40%;
   border: solid gray 1px;
   padding: 30px;
@@ -175,14 +179,14 @@ form div {
 
 #notes-animation {
   position: absolute;
-  top: -90px;
+  top: -100px;
   left: 47%;
   z-index: 1;
   pointer-events: none;
 }
 
 #laptop-animation {
-  top: 100px;
+  top: 0px;
   left: 55%;
   position: absolute;
   pointer-events: none;
