@@ -51,7 +51,6 @@ export const updateSnippet = (snippetInfo) => {
         try {
             const { id } = snippetInfo
             const { data } = await axios.put(`/api/snippets/${id}`, snippetInfo, {headers:{authorization: window.localStorage.getItem('token')}})
-            console.log(`data`, data)
             // return dispatch(_setSnippets([data]))
         } catch (err) {
             console.log(err)

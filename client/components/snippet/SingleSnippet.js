@@ -15,6 +15,10 @@ import {
 } from "@material-ui/core";
 import Coda, { instrumentList } from '../../Coda objects/Coda'
 import { loadingHtml, loadingCss, loadingJs } from "../../Coda objects/loading";
+import { ToastContainer, toast } from 'react-toastify';
+import 'react-toastify/dist/ReactToastify.css'
+
+toast.configure()
 
 const customStyles = {
   content: {
@@ -45,6 +49,7 @@ class SingleSnippet extends React.Component {
     this.modalForm = this.modalForm.bind(this);
     this.handleFormChange = this.handleFormChange.bind(this);
     this.setSrcDoc = this.setSrcDoc.bind(this)
+    this.snippetHasChanged = this.snippetHasChanged.bind(this)
 
     this.afterOpenModalAdd = this.afterOpenModalAdd.bind(this);
     this.closeModalAdd = this.closeModalAdd.bind(this);
@@ -88,20 +93,25 @@ class SingleSnippet extends React.Component {
     });
   }
 
+  // const npm = p => import(\`https://unpkg.com/\${p}?module\`);
+  //         (async () => {
+  //           const Tone = await npm('tone');
+  // })()
+
   setSrcDoc() {
     const jsWithSpace = this.state.js + ' ';
     const srcDoc = `
          <html>
            <body>${loadingHtml} ${this.state.html}</body>
            <style>${loadingCss} ${this.state.css}</style>
+           <link href="https://fonts.googleapis.com/css?family=Material+Icons&display=block" rel="stylesheet"/>
+           <script src="https://tonejs.github.io/build/Tone.js"></script>
+           <script src="https://tonejs.github.io/examples/js/tone-ui.js"></script>
+           <script src="https://tonejs.github.io/examples/js/components.js"></script>
            <script>
-           const npm = p => import(\`https://unpkg.com/\${p}?module\`);
-          (async () => {
-            const Tone = await npm('tone');
             ${loadingJs}
             ${Coda}
            ${jsWithSpace}
-          })()
            </script>
          </html>
        `
@@ -137,8 +147,8 @@ class SingleSnippet extends React.Component {
       id: this.props.match.params.id
     };
     await this.props.updateSnippet(snippetInfo)
+    toast.success("Snippet saved!", {position: toast.POSITION.TOP_CENTER, autoClose: 1500})
   }
-
 
   afterOpenModal() {
     // references are now sync'd and can be accessed.
@@ -381,6 +391,13 @@ class SingleSnippet extends React.Component {
     );
   }
 
+  snippetHasChanged(snippet, state) {
+    if(snippet.html !== state.html) true
+    if(snippet.css !== state.css) true 
+    if(snippet.js !== state.js) true
+    return false
+  }
+
   render() {
     const html = this.state.html;
     const css = this.state.css;
@@ -389,10 +406,11 @@ class SingleSnippet extends React.Component {
     const snippet = this.props.snippet[0];
     const groupIds = this.props.user.id && this.props.user.groups.map(group => (group.id))
     const userGroupValidation = (groupIds && snippet) && groupIds.includes(snippet.groupId)
-    console.log(`userGroupValidation`, userGroupValidation)
     return snippet ? (
       <>
         <div className="save-buttons">
+        <ToastContainer />
+
         {userGroupValidation && <Button variant="outlined" onClick={this.handleSave} style={{"marginRight": "10px"}}>Save</Button>} 
         {this.props.user.id && <Button variant="outlined" onClick={this.openModal} style={{"marginRight": "10px"}}>Save a copy</Button>}
         </div>
@@ -442,7 +460,7 @@ class SingleSnippet extends React.Component {
         )}
       </>
     ) : (
-      <h3>This Snippet Doesn't Exist!!!!!</h3>
+      <h3 className="snippet-loading">Loading...</h3>
     );
   }
 }

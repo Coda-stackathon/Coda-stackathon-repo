@@ -8,12 +8,10 @@ import { Box } from '@material-ui/core'
 class AllSnippets extends React.Component{
 
     componentDidMount() {
-        console.log('hello')
         this.props.getSnippets()
     }
     
     render () {
-        console.log(`this.props.snippets`, this.props.snippets)
         return (
             <div id="snippets-container">
                {this.props.snippets.map(snippet => <Link to={`/snippets/${snippet.id}`} key={snippet.id}><div className="all-snippets-snippet"><p>{snippet.name}</p></div></Link>)}
