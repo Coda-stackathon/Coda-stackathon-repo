@@ -4,12 +4,14 @@ import { Link } from "react-router-dom";
 import Lottie from "react-lottie";
 import notes from "../../public/lotties/notes";
 import laptop from "../../public/lotties/laptop";
+import SingleGroup from "./SingleGroup";
 
 /**
  * COMPONENT
  */
 export const Home = (props) => {
-  const { username } = props;
+  const { user } = props;
+  const username = user.username
   const [isActive, setActive] = useState(false);
 
   const pressButton = () => {
@@ -44,10 +46,7 @@ export const Home = (props) => {
         {username && (<h3>user: {username}</h3>)}
       </div>
       <div className="links-sidebar">
-        <h2 id="sidebar-header">snippets</h2>
-        <Link to="/loops">{"< Loops />"}</Link>
-        <Link to="/binaryTree">{"< Binary Tree />"}</Link>
-        <Link to="/aMatrix">{"< A-Matrix />"}</Link>
+        {username && <SingleGroup group={user.groups[0]} styleId="sidebar-header"/>}
       </div>
       <div id="hero-text">
         <h1>{"{coda}"}</h1>
@@ -75,7 +74,7 @@ export const Home = (props) => {
  */
 const mapState = (state) => {
   return {
-    username: state.auth.username,
+    user: state.auth,
   };
 };
 

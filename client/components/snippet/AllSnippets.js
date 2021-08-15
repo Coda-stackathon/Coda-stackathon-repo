@@ -82,7 +82,6 @@ class AllSnippets extends React.Component {
   openModal() {
     const groups = this.props.user.groups;
     const user = this.props.user;
-    console.log("user", user);
     this.setState({ modalOpen: true });
   }
 

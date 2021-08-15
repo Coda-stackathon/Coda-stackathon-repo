@@ -173,7 +173,6 @@ class SingleSnippet extends React.Component {
 
   openModal() {
     const groupIds = this.props.user.groups.map(group => (group.id))
-    console.log("Conditional", groupIds.includes(this.state.snippet[0].groupId))
     this.setState({ modalOpen: true });
   }
 
@@ -185,7 +184,6 @@ class SingleSnippet extends React.Component {
     let value = event.target.value
     if (event.target.name === 'useSequencer') {
       value = event.target.value == "true" ? true : false
-      console.log('Event typeof ', typeof event.target.value)
     }
     this.setState({ [event.target.name]: value });
   }
@@ -224,7 +222,6 @@ class SingleSnippet extends React.Component {
 
   openModalAdd() {
     const groupIds = this.props.user.groups.map(group => (group.id))
-    console.log("Conditional", groupIds.includes(this.state.snippet[0].groupId))
     this.setState({ modalAddOpen: true });
   }
 
