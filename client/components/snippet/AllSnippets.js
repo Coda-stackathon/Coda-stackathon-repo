@@ -117,6 +117,7 @@ class AllSnippets extends React.Component {
         onRequestClose={this.closeModal}
         style={customStyles}
         contentLabel="Create new snippet"
+        ariaHideApp={false}
       >
         <div
           style={{
