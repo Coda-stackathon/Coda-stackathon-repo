@@ -34,6 +34,20 @@ const customStyles = {
   },
 };
 
+const addFormCustomStyles = {
+  content: {
+    top: "50%",
+    left: "50%",
+    right: "auto",
+    bottom: "auto",
+    marginRight: "-50%",
+    transform: "translate(-50%, -50%)",
+    zIndex: 10,
+    width: "400px",
+    height: "500px",
+  },
+};
+
 let subtitle;
 
 class SingleSnippet extends React.Component {
@@ -224,7 +238,7 @@ class SingleSnippet extends React.Component {
         isOpen={this.state.modalAddOpen}
         onAfterOpen={this.afterOpenModalAdd}
         onRequestClose={this.closeModalAdd}
-        style={customStyles}
+        style={addFormCustomStyles}
         contentLabel="Add Instrument Modal"
       >
         <div
@@ -408,16 +422,22 @@ class SingleSnippet extends React.Component {
     const userGroupValidation = (groupIds && snippet) && groupIds.includes(snippet.groupId)
     return snippet ? (
       <>
-        <div className="save-buttons">
         <ToastContainer />
-
-        {userGroupValidation && <Button variant="outlined" onClick={this.handleSave} style={{"marginRight": "10px"}}>Save</Button>} 
+        <div className="buttons-div">
+        <div>
+        {/* save button */}
+        {userGroupValidation && <Button variant="outlined" onClick={this.handleSave} style={{"marginRight": "10px"}}>Save</Button>}
+         {/*save as button  */}
         {this.props.user.id && <Button variant="outlined" onClick={this.openModal} style={{"marginRight": "10px"}}>Save a copy</Button>}
+        </div>
+        <div>
+        {/* add instrument button */}
+        <Button id="add-instrument" variant="outlined" onClick={this.openModalAdd} style={{"justifySelf": "flexEnd"}}>Add Instrument</Button>
+        </div>
         </div>
         {this.modalForm()}
    
         {this.modalAddForm()}
-        <button onClick={this.openModalAdd}>Add Instrument</button>
 
             <div className="run-button-and-name">
         <h2 className='snippet-name'>{snippet.name}</h2>

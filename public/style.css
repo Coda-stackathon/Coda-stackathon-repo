@@ -120,6 +120,29 @@ form div {
   margin-left: 50px;
 }
 
+#get-started-button {
+  position: fixed;
+  left: 40%;
+  border: solid gray 1px;
+  padding: 30px;
+  font-size: 30px;
+  font-family: "Roboto Mono";
+  cursor: pointer;
+  -webkit-user-select: none; /* Safari */
+  -moz-user-select: none; /* Firefox */
+  -ms-user-select: none; /* IE10+/Edge */
+  user-select: none; /* Standard */
+}
+
+.get-started-button-unclicked {
+  box-shadow: 5px 5px 1px darkgrey;
+}
+
+.get-started-button-clicked {
+  transform: translate(4px, 4px);
+  box-shadow: 2px 2px rgb(93, 93, 93);
+}
+
 #homepage-animation {
   position: relative;
   width: 100vw;
@@ -325,12 +348,12 @@ form div {
 
 .snippet-name {
   font-family: "Roboto Mono", monospace;
-
 }
 
-.save-buttons {
-  margin-left: 20px;
-  margin-top: 20px;
+.buttons-div {
+  display: flex;
+  justify-content: space-between;
+  margin: 20px 20px 0 20px;
 }
 
 .run-button-and-name {
@@ -340,5 +363,3 @@ form div {
   margin-left: 20px;
   margin-right: 20px;
 }
-
-
