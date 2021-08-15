@@ -10,8 +10,10 @@ import {
   Select,
   MenuItem,
   FormControl,
+  FormControlLabel,
+  Checkbox,
 } from "@material-ui/core";
-import Coda from '../../Coda objects/Coda'
+import Coda, { instrumentList } from '../../Coda objects/Coda'
 import { loadingHtml, loadingCss, loadingJs } from "../../Coda objects/loading";
 import { ToastContainer, toast } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css'
@@ -49,6 +51,12 @@ class SingleSnippet extends React.Component {
     this.setSrcDoc = this.setSrcDoc.bind(this)
     this.snippetHasChanged = this.snippetHasChanged.bind(this)
 
+    this.afterOpenModalAdd = this.afterOpenModalAdd.bind(this);
+    this.closeModalAdd = this.closeModalAdd.bind(this);
+    this.openModalAdd = this.openModalAdd.bind(this);
+    this.modalAddForm = this.modalAddForm.bind(this);
+    this.handleAddInstrument = this.handleAddInstrument.bind(this)
+
     this.state = {
       snippet: {},
       html: "",
@@ -56,8 +64,14 @@ class SingleSnippet extends React.Component {
       js: "",
       srcDoc: "",
       modalOpen: false,
+      modalAddOpen: false,
       group: "",
       name: "",
+      instrument: 'simpleSynth',
+      instrumentName: 'synthName',
+      notes: ['\'D3\'','\'C3\'','\'D3\''],
+      useSequencer: false,
+      sequenceName: 'seq'
     };
   }
 
@@ -153,11 +167,159 @@ class SingleSnippet extends React.Component {
   }
 
   handleFormChange(event) {
-    console.log("this.state.name", this.state.name);
-    console.log("this.state.group", this.state.group);
-    console.log('event.currentTarget.getAttribute("name")', event.target.name);
-    console.log("event.target.value", event.target.value);
-    this.setState({ [event.target.name]: event.target.value });
+    let value = event.target.value
+    if (event.target.name === 'useSequencer') {
+      value = event.target.value == "true" ? true : false
+      console.log('Event typeof ', typeof event.target.value)
+    }
+    this.setState({ [event.target.name]: value });
+  }
+
+
+
+  handleAddInstrument(event) {
+    event.preventDefault()
+    let newJs = `const ${this.state.instrumentName.replaceAll(' ', '_')} = coda.newInstrument('${this.state.instrument}') \n`
+    let notesJs = ''
+    if (this.state.notes.length > 0) {
+      if (!this.state.useSequencer) {
+        notesJs = this.state.notes.reduce((accum, currentNote, index) => {
+          return accum + `${this.state.instrumentName.replaceAll(' ', '_')}.playNote(${currentNote},'8n',${index}) \n`
+        }, '')
+      } else {
+        notesJs = `const notes = [${this.state.notes}] \n` +
+        `const ${this.state.sequenceName} = new coda.newSequence('8n') \n` +
+        `${this.state.sequenceName}.addNotes(notes) \n` +
+        `${this.state.sequenceName}.play(${this.state.instrumentName}) \n`
+      }
+    }
+    newJs += notesJs + this.state.js
+    this.setState({
+      modalAddOpen: false,
+      js: newJs
+    })
+  }
+
+
+  afterOpenModalAdd() {
+    // references are now sync'd and can be accessed.
+    subtitle.style.color = "rgb(39, 39, 230)";
+    subtitle.style.fontFamily = "'Roboto Mono', monospace";
+  }
+
+  openModalAdd() {
+    const groupIds = this.props.user.groups.map(group => (group.id))
+    console.log("Conditional", groupIds.includes(this.state.snippet[0].groupId))
+    this.setState({ modalAddOpen: true });
+  }
+
+  closeModalAdd() {
+    this.setState({ modalAddOpen: false });
+  }
+
+  // Add Instrument Form
+  modalAddForm() {
+    return (
+      <Modal
+        isOpen={this.state.modalAddOpen}
+        onAfterOpen={this.afterOpenModalAdd}
+        onRequestClose={this.closeModalAdd}
+        style={customStyles}
+        contentLabel="Add Instrument Modal"
+      >
+        <div
+          style={{
+            display: "flex",
+            justifyContent: "space-between",
+          }}
+        >
+          <h2 ref={(_subtitle) => (subtitle = _subtitle)}>Add instrument</h2>
+          <Button onClick={this.closeModalAdd}>close</Button>
+        </div>
+          <form onSubmit={this.handleAddInstrument}>
+            <FormControl style={{ marginTop: "50px" }}>
+              <InputLabel
+                style={{ transform: "translateX(15px)", fontSize: "12px" }}
+                id="label"
+              >
+                Instrument Name
+              </InputLabel>
+              <Input
+                variant="outlined"
+                name="instrumentName"
+                value={this.state.instrumentName}
+                onChange={this.handleFormChange}
+              />
+            </FormControl>
+            <FormControl style={{ marginTop: "50px" }}>
+              <InputLabel
+                style={{ transform: "translateX(15px)", fontSize: "12px" }}
+                id="label"
+              >
+                Notes
+              </InputLabel>
+              <Input
+                variant="outlined"
+                name="notes"
+                value={this.state.notes}
+                onChange={this.handleFormChange}
+              />
+            </FormControl>
+
+            <FormControl style={{ marginTop: "50px" }}>
+              <FormControlLabel
+                control={<Checkbox checked={this.state.useSequencer} onChange={this.handleFormChange} name="useSequencer" value={!this.state.useSequencer}/>}
+                label="Use Sequencer"
+              />
+            </FormControl>
+            {this.state.useSequencer && 
+            <FormControl style={{ marginTop: "50px" }}>
+              <InputLabel
+                style={{ transform: "translateX(15px)", fontSize: "12px" }}
+                id="label"
+              >
+                Sequencer Name
+              </InputLabel>
+              <Input
+                variant="outlined"
+                name="sequenceName"
+                value={this.state.sequenceName}
+                onChange={this.handleFormChange}
+              />
+            </FormControl>
+            }
+            <FormControl style={{ marginTop: "50px" }}>
+              <InputLabel
+                style={{ transform: "translateX(15px)", fontSize: "12px" }}
+                id="label"
+              >
+                Instrument
+              </InputLabel>
+              <Select
+                style={{ width: "150px" }}
+                labelId="label"
+                id="select"
+                value={this.state.instrument}
+                onChange={this.handleFormChange}
+                name="instrument"
+              >
+                {instrumentList.map((name, index) => (
+                  <MenuItem value={name} key={index}>
+                    {name}
+                  </MenuItem>
+                ))}
+              </Select>
+              <Button
+                style={{ marginTop: "50px" }}
+                type="submit"
+                variant="outlined"
+              >
+                Confirm
+              </Button>
+            </FormControl>
+          </form>
+      </Modal>
+    );
   }
 
   modalForm() {
@@ -243,20 +405,26 @@ class SingleSnippet extends React.Component {
     const srcDoc = this.state.srcDoc;
     const snippet = this.props.snippet[0];
     const groupIds = this.props.user.id && this.props.user.groups.map(group => (group.id))
-    const userGroupValidation = groupIds && groupIds.includes(snippet.groupId)
+    const userGroupValidation = (groupIds && snippet) && groupIds.includes(snippet.groupId)
     return snippet ? (
       <>
         <div className="save-buttons">
         <ToastContainer />
+
         {userGroupValidation && <Button variant="outlined" onClick={this.handleSave} style={{"marginRight": "10px"}}>Save</Button>} 
         {this.props.user.id && <Button variant="outlined" onClick={this.openModal} style={{"marginRight": "10px"}}>Save a copy</Button>}
         </div>
         {this.modalForm()}
+   
+        {this.modalAddForm()}
+        <button onClick={this.openModalAdd}>Add Instrument</button>
+
             <div className="run-button-and-name">
         <h2 className='snippet-name'>{snippet.name}</h2>
             <Button variant="outlined" onClick={this.setSrcDoc} style={{"height":"50px"}}>RUN</Button>
             </div>
-        {!this.state.modalOpen && (
+
+        {!this.state.modalOpen && !this.state.modalAddOpen && (
           <React.Fragment>
             <div className="pane top-pane">
               <Editor

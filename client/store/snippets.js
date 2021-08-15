@@ -27,7 +27,7 @@ export const fetchSnippets = () => {
 export const fetchSnippet = (id) => {
     return async dispatch => {
         try {
-            const { data } = await axios.get(`/api/snippets/${id}`)
+            const { data } = await axios.get(`/api/snippets/${id}`, {headers:{authorization: window.localStorage.getItem('token')}})
             return dispatch(_setSnippets([data]))
         } catch (error) {
             console.log(error)
