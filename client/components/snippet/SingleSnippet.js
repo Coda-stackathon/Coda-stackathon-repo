@@ -10,6 +10,8 @@ import {
   Select,
   MenuItem,
   FormControl,
+  FormControlLabel,
+  Checkbox,
 } from "@material-ui/core";
 import Coda, { instrumentList } from '../../Coda objects/Coda'
 import { loadingHtml, loadingCss, loadingJs } from "../../Coda objects/loading";
@@ -48,6 +50,7 @@ class SingleSnippet extends React.Component {
     this.closeModalAdd = this.closeModalAdd.bind(this);
     this.openModalAdd = this.openModalAdd.bind(this);
     this.modalAddForm = this.modalAddForm.bind(this);
+    this.handleAddInstrument = this.handleAddInstrument.bind(this)
 
     this.state = {
       snippet: {},
@@ -59,6 +62,11 @@ class SingleSnippet extends React.Component {
       modalAddOpen: false,
       group: "",
       name: "",
+      instrument: 'simpleSynth',
+      instrumentName: 'synthName',
+      notes: ['\'D3\'','\'C3\'','\'D3\''],
+      useSequencer: false,
+      sequenceName: 'seq'
     };
   }
 
@@ -149,12 +157,39 @@ class SingleSnippet extends React.Component {
   }
 
   handleFormChange(event) {
-    console.log("this.state.name", this.state.name);
-    console.log("this.state.group", this.state.group);
-    console.log('event.currentTarget.getAttribute("name")', event.target.name);
-    console.log("event.target.value", event.target.value);
-    this.setState({ [event.target.name]: event.target.value });
+    let value = event.target.value
+    if (event.target.name === 'useSequencer') {
+      value = event.target.value == "true" ? true : false
+      console.log('Event typeof ', typeof event.target.value)
+    }
+    this.setState({ [event.target.name]: value });
   }
+
+
+
+  handleAddInstrument(event) {
+    event.preventDefault()
+    let newJs = `const ${this.state.instrumentName.replaceAll(' ', '_')} = coda.newInstrument('${this.state.instrument}') \n`
+    let notesJs = ''
+    if (this.state.notes.length > 0) {
+      if (!this.state.useSequencer) {
+        notesJs = this.state.notes.reduce((accum, currentNote, index) => {
+          return accum + `${this.state.instrumentName.replaceAll(' ', '_')}.playNote(${currentNote},'8n',${index}) \n`
+        }, '')
+      } else {
+        notesJs = `const notes = [${this.state.notes}] \n` +
+        `const ${this.state.sequenceName} = new coda.newSequence('8n') \n` +
+        `${this.state.sequenceName}.addNotes(notes) \n` +
+        `${this.state.sequenceName}.play(${this.state.instrumentName}) \n`
+      }
+    }
+    newJs += notesJs + this.state.js
+    this.setState({
+      modalAddOpen: false,
+      js: newJs
+    })
+  }
+
 
   afterOpenModalAdd() {
     // references are now sync'd and can be accessed.
@@ -172,6 +207,7 @@ class SingleSnippet extends React.Component {
     this.setState({ modalAddOpen: false });
   }
 
+  // Add Instrument Form
   modalAddForm() {
     return (
       <Modal
@@ -179,7 +215,7 @@ class SingleSnippet extends React.Component {
         onAfterOpen={this.afterOpenModalAdd}
         onRequestClose={this.closeModalAdd}
         style={customStyles}
-        contentLabel="Example Modal"
+        contentLabel="Add Instrument Modal"
       >
         <div
           style={{
@@ -187,22 +223,21 @@ class SingleSnippet extends React.Component {
             justifyContent: "space-between",
           }}
         >
-          <h2 ref={(_subtitle) => (subtitle = _subtitle)}>Save Snippet</h2>
+          <h2 ref={(_subtitle) => (subtitle = _subtitle)}>Add instrument</h2>
           <Button onClick={this.closeModalAdd}>close</Button>
         </div>
-        {this.props.user.id && (
-          <form onSubmit={this.handleSaveAs}>
+          <form onSubmit={this.handleAddInstrument}>
             <FormControl style={{ marginTop: "50px" }}>
               <InputLabel
                 style={{ transform: "translateX(15px)", fontSize: "12px" }}
                 id="label"
               >
-                Snippet name
+                Instrument Name
               </InputLabel>
               <Input
                 variant="outlined"
-                name="name"
-                value={this.state.name}
+                name="instrumentName"
+                value={this.state.instrumentName}
                 onChange={this.handleFormChange}
               />
             </FormControl>
@@ -211,19 +246,56 @@ class SingleSnippet extends React.Component {
                 style={{ transform: "translateX(15px)", fontSize: "12px" }}
                 id="label"
               >
-                Snippet group
+                Notes
+              </InputLabel>
+              <Input
+                variant="outlined"
+                name="notes"
+                value={this.state.notes}
+                onChange={this.handleFormChange}
+              />
+            </FormControl>
+
+            <FormControl style={{ marginTop: "50px" }}>
+              <FormControlLabel
+                control={<Checkbox checked={this.state.useSequencer} onChange={this.handleFormChange} name="useSequencer" value={!this.state.useSequencer}/>}
+                label="Use Sequencer"
+              />
+            </FormControl>
+            {this.state.useSequencer && 
+            <FormControl style={{ marginTop: "50px" }}>
+              <InputLabel
+                style={{ transform: "translateX(15px)", fontSize: "12px" }}
+                id="label"
+              >
+                Sequencer Name
+              </InputLabel>
+              <Input
+                variant="outlined"
+                name="sequenceName"
+                value={this.state.sequenceName}
+                onChange={this.handleFormChange}
+              />
+            </FormControl>
+            }
+            <FormControl style={{ marginTop: "50px" }}>
+              <InputLabel
+                style={{ transform: "translateX(15px)", fontSize: "12px" }}
+                id="label"
+              >
+                Instrument
               </InputLabel>
               <Select
                 style={{ width: "150px" }}
                 labelId="label"
                 id="select"
-                value={this.state.group}
+                value={this.state.instrument}
                 onChange={this.handleFormChange}
-                name="group"
+                name="instrument"
               >
-                {this.props.user.groups.map((group) => (
-                  <MenuItem value={group.id} key={group.id}>
-                    {group.name}
+                {instrumentList.map((name, index) => (
+                  <MenuItem value={name} key={index}>
+                    {name}
                   </MenuItem>
                 ))}
               </Select>
@@ -236,7 +308,6 @@ class SingleSnippet extends React.Component {
               </Button>
             </FormControl>
           </form>
-        )}
       </Modal>
     );
   }
@@ -322,21 +393,20 @@ class SingleSnippet extends React.Component {
     return snippet ? (
       <>
         <div className="save-buttons">
-        {userGroupValidation && <Button variant="outlined" onClick={this.handleSave} style={{"margin-right": "10px"}}>Save</Button>} 
-        {this.props.user.id && <Button variant="outlined" onClick={this.openModal} style={{"margin-right": "10px"}}>Save a copy</Button>}
+        {userGroupValidation && <Button variant="outlined" onClick={this.handleSave} style={{"marginRight": "10px"}}>Save</Button>} 
+        {this.props.user.id && <Button variant="outlined" onClick={this.openModal} style={{"marginRight": "10px"}}>Save a copy</Button>}
         </div>
         {this.modalForm()}
    
         {this.modalAddForm()}
-        {this.props.user.id && <button onClick={this.openModalAdd}>Add Instrument</button>}
-
+        <button onClick={this.openModalAdd}>Add Instrument</button>
 
             <div className="run-button-and-name">
         <h2 className='snippet-name'>{snippet.name}</h2>
             <Button variant="outlined" onClick={this.setSrcDoc} style={{"height":"50px"}}>RUN</Button>
             </div>
 
-        {!this.state.modalOpen && (
+        {!this.state.modalOpen && !this.state.modalAddOpen && (
           <React.Fragment>
             <div className="pane top-pane">
               <Editor

@@ -1,5 +1,16 @@
-import Tone from "tone"
+import * as Tone from "tone"
 import { piano }  from "./piano"
+
+export const instrumentList = [
+    'simpleSynth',
+    'monoSynth',
+    'fmSynth',
+    'amSynth',
+    'polySynth',
+    'metalSynth',
+    'pluckSynth',
+    'piano',
+]
 
 const Coda = `class Coda {
     constructor () {
@@ -23,6 +34,10 @@ const Coda = `class Coda {
 
 Coda.prototype.getInstrument = function(type) {
     return (this.instrument[type])
+}
+
+Coda.prototype.newInstrument = function(type) {
+    return new instrument(type)
 }
 
 Coda.prototype.getSynth = function(type) {
@@ -56,7 +71,7 @@ class instrument {
     }
 }
 
-instrument.prototype.playNote = function(note, length, time = Tone.now()) {
+instrument.prototype.playNote = function(note, length = '8n', time = Tone.now()) {
     this.holder.triggerAttackRelease(note, length, time)
 } 
 

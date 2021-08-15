@@ -1,5 +1,16 @@
 const { models: { User } } = require('../db')
 
+const getUserIfExists = async (req, res, next) => {
+  try {
+    const token = req.headers.authorization
+    const user = !token && await User.findByToken(token)
+    req.user = user
+    next()
+  } catch(e) {
+    next(e)
+  }
+}
+
 const requireToken = async (req, res, next) => {
   try {
     const token = req.headers.authorization
@@ -20,6 +31,7 @@ const isAdmin = (req, res, next) => {
 }
 
 module.exports = {
+  getUserIfExists,
   requireToken,
   isAdmin
 }
