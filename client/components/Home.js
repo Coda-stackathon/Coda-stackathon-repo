@@ -45,9 +45,15 @@ export const Home = (props) => {
       <div className="greeting">
         {username && (<h3>user: {username}</h3>)}
       </div>
+      {
+      username &&
       <div className="links-sidebar">
-        {username && <SingleGroup group={user.groups[0]} styleId="sidebar-header"/>}
+        <SingleGroup group={user.groups[0]} styleId="sidebar-header"/>
+        <div id="show-my-groups">
+          <Link to="/groups"><h3>Show My Groups</h3></Link>
+        </div>
       </div>
+      }
       <div id="hero-text">
         <h1>{"{coda}"}</h1>
         <div>
