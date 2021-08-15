@@ -1,5 +1,6 @@
 import * as Tone from "tone"
 import { piano }  from "./piano"
+import { drums } from "./808"
 
 export const instrumentList = [
     'simpleSynth',
@@ -28,6 +29,7 @@ const Coda = `class Coda {
             metalSynth: new instrument('metalSynth'),
             pluckSynth: new instrument('pluckSynth'),
             piano: new instrument('piano'),
+            drums: new instrument('drums'),
         }
     }
 }
@@ -54,7 +56,7 @@ Coda.prototype.newSequence = function(noteLength) {
 
 class instrument {
 
-    constructor(type) {
+    constructor(type = 'synth') {
         let holder;
         switch(type) {
             case 'synth': holder = new Tone.Synth().toDestination(); break;
@@ -65,14 +67,26 @@ class instrument {
             case 'metalSynth': holder = new Tone.MetalSynth().toDestination(); break;
             case 'pluckSynth': holder = new Tone.PluckSynth().toDestination(); break;
             case 'piano': holder = ${piano}; break;
+            case 'drums': holder = new drum(); break;
             default: holder = new Tone.Synth().toDestination();
         }
         this.holder = holder
+        this.type = type
     }
 }
 
 instrument.prototype.playNote = function(note, length = '8n', time = Tone.now()) {
-    this.holder.triggerAttackRelease(note, length, time)
+    Tone.ToneAudioBuffer.loaded().then(() =>{
+
+        if (this.type !== 'drums') {
+            this.holder.triggerAttackRelease(note, length, time)
+        } else {
+            const drum = note.slice(0,note.indexOf('.'))
+            const drumNote = note.slice(note.indexOf('.') + 1)
+            this.holder.getDrum(drum).player(drumNote).start()
+        }
+
+        });
 } 
 
 class sequence {
@@ -113,7 +127,10 @@ sequence.prototype.stop = function() {
     Tone.Transport.cancel(0)
 }
 
+${drums}
+
 const coda = new Coda()
+
 `
 
 export default Coda
