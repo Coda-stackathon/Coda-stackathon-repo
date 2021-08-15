@@ -39,6 +39,7 @@ export const Home = (props) => {
   };
 
   return (
+    <div className="hide-overflow">
     <div className="parent-div">
       <div className="greeting">
         {username && (<h3>user: {username}</h3>)}
@@ -66,6 +67,7 @@ export const Home = (props) => {
           <Lottie options={laptopOptions} width={800}/>
         </div>
       </div>
+    </div>
     </div>
   );
 };
