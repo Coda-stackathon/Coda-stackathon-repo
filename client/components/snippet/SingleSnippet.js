@@ -15,10 +15,11 @@ import {
 } from "@material-ui/core";
 import Coda, { instrumentList } from '../../Coda objects/Coda'
 import { loadingHtml, loadingCss, loadingJs } from "../../Coda objects/loading";
-import { ToastContainer, toast } from 'react-toastify';
+// import { ToastContainer, toast } from 'react-toastify';
+import { toast } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css'
 
-toast.configure()
+// toast.configure()
 
 const customStyles = {
   content: {
@@ -422,7 +423,7 @@ class SingleSnippet extends React.Component {
     const userGroupValidation = (groupIds && snippet) && groupIds.includes(snippet.groupId)
     return snippet ? (
       <>
-        <ToastContainer />
+        {/* <ToastContainer /> */}
         <div className="buttons-div">
         <div>
         {/* save button */}

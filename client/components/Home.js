@@ -55,7 +55,7 @@ export const Home = (props) => {
         <p>a web application for the exploration of{"   {"}</p>
         <p>{"(music && code)"}</p>
         <p>{"}"}</p>
-        <div id="get-started-button" className={isActive ? 'get-started-button-clicked': 'get-started-button-unclicked'} onMouseDown={()=> pressButton()} onMouseUp={()=> releaseButton()} >Get Started</div>
+        <div id="get-started-button" className={isActive ? 'button-clicked': 'button-unclicked'} onMouseDown={()=> pressButton()} onMouseUp={()=> releaseButton()} >Get Started</div>
         </div>
       </div>
       <div id="homepage-animation">
