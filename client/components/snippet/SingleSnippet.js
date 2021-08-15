@@ -238,6 +238,7 @@ class SingleSnippet extends React.Component {
         onRequestClose={this.closeModalAdd}
         style={addFormCustomStyles}
         contentLabel="Add Instrument Modal"
+        ariaHideApp={false}
       >
         <div
           style={{
@@ -342,6 +343,7 @@ class SingleSnippet extends React.Component {
         onRequestClose={this.closeModal}
         style={customStyles}
         contentLabel="Example Modal"
+        ariaHideApp={false}
       >
         <div
           style={{
@@ -411,6 +413,7 @@ class SingleSnippet extends React.Component {
   }
 
   render() {
+    
     const html = this.state.html;
     const css = this.state.css;
     const js = this.state.js;
@@ -419,7 +422,7 @@ class SingleSnippet extends React.Component {
     const groupIds = this.props.user.id && this.props.user.groups.map(group => (group.id))
     const userGroupValidation = (groupIds && snippet) && groupIds.includes(snippet.groupId)
     return snippet ? (
-      <>
+      <div id="singleSnippetContainter">
         {/* <ToastContainer /> */}
         <div className="buttons-div">
         <div>
@@ -442,7 +445,7 @@ class SingleSnippet extends React.Component {
             <Button variant="outlined" onClick={this.setSrcDoc} style={{"height":"50px"}}>RUN</Button>
             </div>
 
-        {!this.state.modalOpen && !this.state.modalAddOpen && (
+        
           <React.Fragment>
             <div className="pane top-pane">
               <Editor
@@ -475,8 +478,7 @@ class SingleSnippet extends React.Component {
               />
             </div>
           </React.Fragment>
-        )}
-      </>
+      </ div>
     ) : (
       <h3 className="snippet-loading">Loading...</h3>
     );

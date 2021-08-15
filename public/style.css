@@ -193,6 +193,11 @@ form div {
   height: 200px;
 } */
 
+.CodeMirror { 
+  z-index: 0 
+}
+
+
 #codeblock-form {
   display: flex;
   flex-direction: column;
