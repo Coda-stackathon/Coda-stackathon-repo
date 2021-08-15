@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useState } from "react";
 import { connect } from "react-redux";
 import { Link } from "react-router-dom";
 import Lottie from "react-lottie";
@@ -10,6 +10,15 @@ import laptop from "../../public/lotties/laptop";
  */
 export const Home = (props) => {
   const { username } = props;
+  const [isActive, setActive] = useState(false);
+
+  const pressButton = () => {
+    setActive(true);
+  };
+
+  const releaseButton = () => {
+    setActive(false);
+  };
 
   const notesOptions = {
     loop: true,
@@ -45,8 +54,8 @@ export const Home = (props) => {
         <div>
         <p>a web application for the exploration of{"   {"}</p>
         <p>{"(music && code)"}</p>
-        <p>check out the snippets to the left to get started</p>
         <p>{"}"}</p>
+        <div id="get-started-button" className={isActive ? 'get-started-button-clicked': 'get-started-button-unclicked'} onMouseDown={()=> pressButton()} onMouseUp={()=> releaseButton()} >Get Started</div>
         </div>
       </div>
       <div id="homepage-animation">
