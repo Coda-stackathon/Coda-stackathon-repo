@@ -79,20 +79,25 @@ class SingleSnippet extends React.Component {
     });
   }
 
+  // const npm = p => import(\`https://unpkg.com/\${p}?module\`);
+  //         (async () => {
+  //           const Tone = await npm('tone');
+  // })()
+
   setSrcDoc() {
     const jsWithSpace = this.state.js + ' ';
     const srcDoc = `
          <html>
            <body>${loadingHtml} ${this.state.html}</body>
            <style>${loadingCss} ${this.state.css}</style>
+           <link href="https://fonts.googleapis.com/css?family=Material+Icons&display=block" rel="stylesheet"/>
+           <script src="https://tonejs.github.io/build/Tone.js"></script>
+           <script src="https://tonejs.github.io/examples/js/tone-ui.js"></script>
+           <script src="https://tonejs.github.io/examples/js/components.js"></script>
            <script>
-           const npm = p => import(\`https://unpkg.com/\${p}?module\`);
-          (async () => {
-            const Tone = await npm('tone');
             ${loadingJs}
             ${Coda}
            ${jsWithSpace}
-          })()
            </script>
          </html>
        `

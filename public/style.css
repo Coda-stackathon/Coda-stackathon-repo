@@ -313,6 +313,7 @@ form div {
   border: solid gray 1px;
   margin-bottom: 50px;
   padding: 10px 0 10px 0;
+  box-shadow: 5px 5px 1px darkgrey;
 }
 
 .all-snippets-snippet p {
