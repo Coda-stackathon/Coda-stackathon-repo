@@ -20,6 +20,12 @@ export const Home = (props) => {
 
   const releaseButton = () => {
     setActive(false);
+    if (username) {
+      props.history.push('/snippets')
+    } else {
+      props.history.push('/snippet')
+    }
+
   };
 
   const notesOptions = {

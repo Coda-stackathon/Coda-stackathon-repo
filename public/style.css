@@ -70,13 +70,16 @@ a {
 }
 
 .links-sidebar {
-  position: fixed;
+  position: absolute;
+  top: -30px;
   margin-left: 50px;
   display: flex;
   flex-direction: column;
   width: 200px;
-  height: 77vh;
+  height: 100vh;
   border-right: solid gray 1px;
+  padding-right: 30px;
+  padding-top: 30px;
 }
 
 .sidebar-header {
@@ -154,14 +157,14 @@ form div {
   -ms-user-select: none; /* IE10+/Edge */
   user-select: none; /* Standard */
 }
-
+/* 
 .svg-inline--fa {
   height: 2em
-}
+} */
 
-.svg-inline--fa.fa-w-14 {
+/* .svg-inline--fa.fa-w-14 {
   width: 4.875em;
-}
+} */
 
 .button-unclicked {
   box-shadow: 5px 5px 1px darkgrey;

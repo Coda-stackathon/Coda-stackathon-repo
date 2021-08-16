@@ -1,6 +1,8 @@
 import React, { useState, useEffect } from 'react';
 import Editor from './Editor'
 import useLocalStorage from './hooks/useLocalStorage'
+import { loadingHtml, loadingCss, loadingJs } from "../../Coda objects/loading";
+import { Button } from '@material-ui/core';
 
 export const Snippet = () => {
   const [html, setHtml] = useLocalStorage('html', '')
@@ -12,15 +14,10 @@ export const Snippet = () => {
     const timeout = setTimeout(() => {
       setSrcDoc(`
         <html>
-          <body>${html}</body>
-          <style>${css}</style>
-          <script>
-          const npm = p => import(\`https://unpkg.com/\${p}?module\`);
-          (async () => {
-          const Tone = await npm('tone');
-           ${js}
-          })()
-          </script>
+          <body>${loadingHtml} ${html}</body>
+          <style>${loadingCss} ${css}</style>
+          <script src="https://tonejs.github.io/build/Tone.js"></script>
+          <script>${loadingJs} ${js}</script>
         </html>
       `)
     }, 1000)
@@ -30,6 +27,9 @@ export const Snippet = () => {
 
   return (
     <>
+    <div className="run-button-and-name">
+            <Button variant="outlined" onClick={setSrcDoc} style={{"height":"50px"}}>RUN</Button>
+            </div>
       <div className="pane top-pane">
         <Editor
           language="xml"
