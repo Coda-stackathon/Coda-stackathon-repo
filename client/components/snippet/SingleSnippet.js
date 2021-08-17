@@ -18,6 +18,7 @@ import { loadingHtml, loadingCss, loadingJs } from "../../Coda objects/loading";
 // import { ToastContainer, toast } from 'react-toastify';
 import { toast } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css'
+import { SaveSnippet } from "../modals";
 
 // toast.configure()
 
@@ -78,7 +79,7 @@ class SingleSnippet extends React.Component {
       css: "",
       js: "",
       srcDoc: "",
-      modalOpen: false,
+      // modalOpen: false,
       modalAddOpen: false,
       group: "",
       name: "",
@@ -418,9 +419,18 @@ class SingleSnippet extends React.Component {
     const js = this.state.js;
     const srcDoc = this.state.srcDoc;
     const snippet = this.props.snippet[0];
-    console.log(JSON.stringify(snippet))
     const groupIds = this.props.user.id && this.props.user.groups.map(group => (group.id))
     const userGroupValidation = (groupIds && snippet) && groupIds.includes(snippet.groupId)
+
+    let snippetInfo
+    if (snippet) {
+      snippetInfo = {
+        html,
+        css,
+        js,
+      }
+    }
+
     return snippet ? (
       <div id="singleSnippetContainter">
         {/* <ToastContainer /> */}
@@ -429,15 +439,17 @@ class SingleSnippet extends React.Component {
         {/* save button */}
         {userGroupValidation && <Button variant="outlined" onClick={this.handleSave} style={{"marginRight": "10px"}}>Save</Button>}
          {/*save as button  */}
-        {this.props.user.id && <Button variant="outlined" onClick={this.openModal} style={{"marginRight": "10px"}}>Save a copy</Button>}
+        
+        {this.props.user.id && <SaveSnippet history={this.props.history} snippetInfo={snippetInfo}/>}
+
+        {/* {this.props.user.id && <Button variant="outlined" onClick={this.openModal} style={{"marginRight": "10px"}}>Save a copy</Button>} */}
         </div>
         <div>
         {/* add instrument button */}
         <Button id="add-instrument" variant="outlined" onClick={this.openModalAdd} style={{"justifySelf": "flexEnd"}}>Add Instrument</Button>
         </div>
         </div>
-        {this.modalForm()}
-   
+        {/* {this.modalForm()} */}
         {this.modalAddForm()}
 
             <div className="run-button-and-name">
