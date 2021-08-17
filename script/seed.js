@@ -110,20 +110,22 @@ function repeat(time) {
  *      match the models, and populates the database.
  */
 async function seed() {
-  await db.sync({ force: false }) // clears db and matches models to tables
+  await db.sync({ force: true }) // clears db and matches models to tables
   console.log('db synced!')
 
-  // Creating Users
-  const users = await Promise.all([
-    User.create({ username: 'cody', email: 'cody@email.com', password: '123' }),
-    User.create({ username: 'murphy', email: 'murphy@email.com', password: '123' }),
-  ])
+  const test = require('./users.json')
+  const snippetTest = require('./snippets.json')
 
-  const snippet = await Snippet.create({name: "hello world", contentHTML: cHTML, contentCSS: cCSS, contentJS: cJS})
+  // Creating Users
+  const users = await User.bulkCreate(test, {individualHooks: true})
+  const snippets = await Snippet.bulkCreate(snippetTest, {individualHooks: true})
+
+
+  //const snippet = await Snippet.create({name: "hello world", contentHTML: cHTML, contentCSS: cCSS, contentJS: cJS})
 
   const usergroups = await users[0].getGroups()
 
-  await usergroups[0].addSnippet(snippet)
+  //await usergroups[0].addSnippet(snippet)
 
   console.log(`seeded ${users.length} users`)
   console.log(`seeded successfully`)

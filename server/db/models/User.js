@@ -44,7 +44,7 @@ module.exports = User
 /**
  * instanceMethods
  */
-User.prototype.correctPassword = function(candidatePwd) {
+User.prototype.correctPassword = async function(candidatePwd) {
   //we need to compare the plain version to an encrypted version of the password
   return bcrypt.compare(candidatePwd, this.password);
 }
@@ -58,6 +58,7 @@ User.prototype.generateToken = function() {
  */
 User.authenticate = async function({ username, password }){
     const user = await this.findOne({where: { username }})
+    
     if (!user || !(await user.correctPassword(password))) {
       const error = Error('Incorrect username/password');
       error.status = 401;
