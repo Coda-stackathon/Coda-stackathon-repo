@@ -65,11 +65,14 @@ export class AuthForm extends React.Component {
         
         let email = ''
         if (event.target.email) email = event.target.email.value
-        this.props.authen(username, email, password, formName)
+        await this.props.authen(username, email, password, formName)
         if (!this.props.error) {
             this.closeModal()
-
             toast.success(`Logged in as ${username}`, {position: toast.POSITION.TOP_CENTER, autoClose: 1500})
+        } else {
+            this.setState({
+                error: this.props.error
+            })
         }
 
     }
@@ -85,7 +88,7 @@ export class AuthForm extends React.Component {
     }
 
     closeModal() {
-        this.setState({ modalOpen: false });
+        this.setState({ modalOpen: false, error: null });
     }
 
 
@@ -158,7 +161,7 @@ export class AuthForm extends React.Component {
                     </Button>
                     </FormControl>
 
-                    {this.props.error && this.props.error.response && <div> {this.props.error.response.data} </div>}
+                    {this.state.error && this.state.error.response && <div> {this.state.error.response.data} </div>}
                 </form>
             
             </Modal>
