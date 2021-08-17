@@ -1,7 +1,7 @@
 import React from "react";
 import { connect } from "react-redux";
 import Editor from "./Editor";
-import { fetchSnippet, saveSnippet, updateSnippet } from "../../store/snippets";
+import { fetchSnippet, updateSnippet } from "../../store/snippets";
 import Modal from "react-modal";
 import {
   Button,
@@ -18,23 +18,8 @@ import { loadingHtml, loadingCss, loadingJs } from "../../Coda objects/loading";
 // import { ToastContainer, toast } from 'react-toastify';
 import { toast } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css'
-import { SaveSnippet } from "../modals";
+import { SaveSnippetCopy } from "../modals";
 
-// toast.configure()
-
-const customStyles = {
-  content: {
-    top: "50%",
-    left: "50%",
-    right: "auto",
-    bottom: "auto",
-    marginRight: "-50%",
-    transform: "translate(-50%, -50%)",
-    zIndex: 10,
-    width: "400px",
-    height: "300px",
-  },
-};
 
 const addFormCustomStyles = {
   content: {
@@ -58,11 +43,6 @@ class SingleSnippet extends React.Component {
 
     this.handleChange = this.handleChange.bind(this);
     this.handleSave = this.handleSave.bind(this);
-    this.handleSaveAs = this.handleSaveAs.bind(this)
-    this.afterOpenModal = this.afterOpenModal.bind(this);
-    this.closeModal = this.closeModal.bind(this);
-    this.openModal = this.openModal.bind(this);
-    this.modalForm = this.modalForm.bind(this);
     this.handleFormChange = this.handleFormChange.bind(this);
     this.setSrcDoc = this.setSrcDoc.bind(this)
     this.snippetHasChanged = this.snippetHasChanged.bind(this)
@@ -79,7 +59,6 @@ class SingleSnippet extends React.Component {
       css: "",
       js: "",
       srcDoc: "",
-      // modalOpen: false,
       modalAddOpen: false,
       group: "",
       name: "",
@@ -109,10 +88,6 @@ class SingleSnippet extends React.Component {
     });
   }
 
-  // const npm = p => import(\`https://unpkg.com/\${p}?module\`);
-  //         (async () => {
-  //           const Tone = await npm('tone');
-  // })()
 
   setSrcDoc() {
     const jsWithSpace = this.state.js + ' ';
@@ -137,20 +112,6 @@ class SingleSnippet extends React.Component {
     });
   }
 
-  async handleSaveAs(event) {
-    event.preventDefault();
-    const snippetInfo = {
-      name: this.state.name,
-      contentHTML: this.state.html,
-      contentCSS: this.state.css,
-      contentJS: this.state.js,
-      group: this.state.group,
-      id: this.props.match.params.id
-    };
-    const newSnip = await this.props.saveSnippet(snippetInfo);
-    this.setState({ modalOpen: false });
-    this.props.history.push(`/snippets/${newSnip.snippets[0].id}`)
-  }
 
   async handleSave(event) {
     event.preventDefault();
@@ -166,20 +127,6 @@ class SingleSnippet extends React.Component {
     toast.success("Snippet saved!", {position: toast.POSITION.TOP_CENTER, autoClose: 1500})
   }
 
-  afterOpenModal() {
-    // references are now sync'd and can be accessed.
-    subtitle.style.color = "rgb(39, 39, 230)";
-    subtitle.style.fontFamily = "'Roboto Mono', monospace";
-  }
-
-  openModal() {
-    const groupIds = this.props.user.groups.map(group => (group.id))
-    this.setState({ modalOpen: true });
-  }
-
-  closeModal() {
-    this.setState({ modalOpen: false });
-  }
 
   handleFormChange(event) {
     let value = event.target.value
@@ -188,8 +135,6 @@ class SingleSnippet extends React.Component {
     }
     this.setState({ [event.target.name]: value });
   }
-
-
 
   handleAddInstrument(event) {
     event.preventDefault()
@@ -336,75 +281,7 @@ class SingleSnippet extends React.Component {
     );
   }
 
-  modalForm() {
-    return (
-      <Modal
-        isOpen={this.state.modalOpen}
-        onAfterOpen={this.afterOpenModal}
-        onRequestClose={this.closeModal}
-        style={customStyles}
-        contentLabel="Example Modal"
-        ariaHideApp={false}
-      >
-        <div
-          style={{
-            display: "flex",
-            justifyContent: "space-between",
-          }}
-        >
-          <h2 ref={(_subtitle) => (subtitle = _subtitle)}>Save Snippet</h2>
-          <Button onClick={this.closeModal}>close</Button>
-        </div>
-        {this.props.user.id && (
-          <form onSubmit={this.handleSaveAs}>
-            <FormControl style={{ marginTop: "50px" }}>
-              <InputLabel
-                style={{ transform: "translateX(15px)", fontSize: "12px" }}
-                id="label"
-              >
-                Snippet name
-              </InputLabel>
-              <Input
-                variant="outlined"
-                name="name"
-                value={this.state.name}
-                onChange={this.handleFormChange}
-              />
-            </FormControl>
-            <FormControl style={{ marginTop: "50px" }}>
-              <InputLabel
-                style={{ transform: "translateX(15px)", fontSize: "12px" }}
-                id="label"
-              >
-                Snippet group
-              </InputLabel>
-              <Select
-                style={{ width: "150px" }}
-                labelId="label"
-                id="select"
-                value={this.state.group}
-                onChange={this.handleFormChange}
-                name="group"
-              >
-                {this.props.user.groups.map((group) => (
-                  <MenuItem value={group.id} key={group.id}>
-                    {group.name}
-                  </MenuItem>
-                ))}
-              </Select>
-              <Button
-                style={{ marginTop: "50px" }}
-                type="submit"
-                variant="outlined"
-              >
-                Confirm
-              </Button>
-            </FormControl>
-          </form>
-        )}
-      </Modal>
-    );
-  }
+ 
 
   snippetHasChanged(snippet, state) {
     if(snippet.html !== state.html) true
@@ -421,15 +298,7 @@ class SingleSnippet extends React.Component {
     const snippet = this.props.snippet[0];
     const groupIds = this.props.user.id && this.props.user.groups.map(group => (group.id))
     const userGroupValidation = (groupIds && snippet) && groupIds.includes(snippet.groupId)
-
-    let snippetInfo
-    if (snippet) {
-      snippetInfo = {
-        html,
-        css,
-        js,
-      }
-    }
+    const snippetInfo = { html, css, js }
 
     return snippet ? (
       <div id="singleSnippetContainter">
@@ -440,16 +309,14 @@ class SingleSnippet extends React.Component {
         {userGroupValidation && <Button variant="outlined" onClick={this.handleSave} style={{"marginRight": "10px"}}>Save</Button>}
          {/*save as button  */}
         
-        {this.props.user.id && <SaveSnippet history={this.props.history} snippetInfo={snippetInfo}/>}
+        {this.props.user.id && <SaveSnippetCopy history={this.props.history} snippetInfo={snippetInfo}/>}
 
-        {/* {this.props.user.id && <Button variant="outlined" onClick={this.openModal} style={{"marginRight": "10px"}}>Save a copy</Button>} */}
         </div>
         <div>
         {/* add instrument button */}
         <Button id="add-instrument" variant="outlined" onClick={this.openModalAdd} style={{"justifySelf": "flexEnd"}}>Add Instrument</Button>
         </div>
         </div>
-        {/* {this.modalForm()} */}
         {this.modalAddForm()}
 
             <div className="run-button-and-name">
@@ -499,13 +366,11 @@ class SingleSnippet extends React.Component {
 
 const mapStateToProps = (state) => ({
   snippet: state.snippets,
-  synths: state.synths,
   user: state.auth,
 });
 
 const mapDispatchToProps = (dispatch) => ({
   getSnippet: (id) => dispatch(fetchSnippet(id)),
-  saveSnippet: (snippetInfo) => dispatch(saveSnippet(snippetInfo)),
   updateSnippet: (snippetInfo) => dispatch(updateSnippet(snippetInfo))
 });
 

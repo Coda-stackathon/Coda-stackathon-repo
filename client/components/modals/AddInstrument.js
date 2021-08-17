@@ -16,7 +16,7 @@ import { toast } from 'react-toastify';
 import modalStyle from './modalStyle';
 import { saveSnippet } from '../../store/snippets';
 
-class SaveModal extends React.Component {
+class SaveCopyModal extends React.Component {
 
 
     constructor(props) {
@@ -158,4 +158,4 @@ const mapDispatch = dispatch => ({
 
 })
 
-export const SaveSnippet = connect(mapState,mapDispatch)(SaveModal)
+export const SaveSnippetCopy = connect(mapState,mapDispatch)(SaveCopyModal)

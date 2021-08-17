@@ -1,2 +1,2 @@
 export { Login, Signup } from "./AuthForm";
-export { SaveSnippet } from './SaveSnippet';
+export { SaveSnippetCopy } from './SaveSnippetCopy';
