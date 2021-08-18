@@ -14,6 +14,7 @@ import {
 import { connect } from 'react-redux';
 import { toast } from 'react-toastify';
 import modalStyle from './modalStyle';
+import { instrumentList } from '../../Coda objects/Coda'
 import { saveSnippet } from '../../store/snippets';
 
 class SaveCopyModal extends React.Component {
@@ -23,8 +24,11 @@ class SaveCopyModal extends React.Component {
         super(props)
         this.state = {
             modalOpen: false,
-            group: '',
-            name: ''
+            instrument: 'simpleSynth',
+            instrumentName: 'synthName',
+            notes: ['\'D3\'','\'C3\'','\'D3\''],
+            useSequencer: false,
+            sequenceName: 'seq'
         }
 
         this.afterOpenModal = this.afterOpenModal.bind(this)
@@ -33,7 +37,10 @@ class SaveCopyModal extends React.Component {
         this.handleFormChange = this.handleFormChange.bind(this)
         this.handleSaveAs = this.handleSaveAs.bind(this)
 
+        this.handleSubmit = this.handleSubmit.bind(this)
+
         this.customStyles = modalStyle()
+        this.customStyles.content.height = "500px"
         this.subtitle = '';
         
     }
@@ -47,15 +54,17 @@ class SaveCopyModal extends React.Component {
     
       openModal() {
         this.setState({ modalOpen: true, ...this.props.snippetInfo});
-        console.log(this.state)
       }
     
       closeModal() {
-        this.setState({ modalOpen: false });
+        this.setState({ modalOpen: false, useSequencer: false });
       }
     
       handleFormChange(event) {
         let value = event.target.value
+        if (event.target.name === 'useSequencer') {
+          value = event.target.value == "true" ? true : false
+        }
         this.setState({ [event.target.name]: value });
       }
 
@@ -74,17 +83,25 @@ class SaveCopyModal extends React.Component {
         this.setState({ modalOpen: false });
         this.props.history.push(`/snippets/${newSnip.snippets[0].id}`)
     }
+
+    handleSubmit(event) {
+        event.preventDefault()
+        this.props.handleAddInstrument(event)
+        this.setState({
+            modalOpen: false
+        })
+    }
     
     render() {
         return (
             <>
-            <Button variant="outlined" onClick={this.openModal} style={{"marginRight": "10px"}}>Save a copy</Button>
+            <Button id="add-instrument" variant="outlined" onClick={this.openModal} style={{"justifySelf": "flexEnd"}}>Add Instrument</Button>
             <Modal
                 isOpen={this.state.modalOpen}
                 onAfterOpen={this.afterOpenModal}
                 onRequestClose={this.closeModal}
                 style={this.customStyles}
-                contentLabel="Save Snippet"
+                contentLabel="Add Instrument Modal"
                 ariaHideApp={false}
             >
                 <div
@@ -93,22 +110,21 @@ class SaveCopyModal extends React.Component {
                     justifyContent: "space-between",
                 }}
                 >
-                <h2 ref={(_subtitle) => (this.subtitle = _subtitle)}>Save Snippet</h2>
+                <h2 ref={(_subtitle) => (this.subtitle = _subtitle)}>Add instrument</h2>
                 <Button onClick={this.closeModal}>close</Button>
                 </div>
-                {this.props.user.id && (
-                <form onSubmit={this.handleSaveAs}>
+                <form onSubmit={this.handleSubmit}>
                     <FormControl style={{ marginTop: "50px" }}>
                     <InputLabel
                         style={{ transform: "translateX(15px)", fontSize: "12px" }}
                         id="label"
                     >
-                        Snippet name
+                        Instrument Name
                     </InputLabel>
                     <Input
                         variant="outlined"
-                        name="name"
-                        value={this.state.name}
+                        name="instrumentName"
+                        value={this.state.instrumentName}
                         onChange={this.handleFormChange}
                     />
                     </FormControl>
@@ -117,19 +133,56 @@ class SaveCopyModal extends React.Component {
                         style={{ transform: "translateX(15px)", fontSize: "12px" }}
                         id="label"
                     >
-                        Snippet group
+                        Notes
+                    </InputLabel>
+                    <Input
+                        variant="outlined"
+                        name="notes"
+                        value={this.state.notes}
+                        onChange={this.handleFormChange}
+                    />
+                    </FormControl>
+
+                    <FormControl style={{ marginTop: "50px" }}>
+                    <FormControlLabel
+                        control={<Checkbox checked={this.state.useSequencer} onChange={this.handleFormChange} name="useSequencer" value={!this.state.useSequencer}/>}
+                        label="Use Sequencer"
+                    />
+                    </FormControl>
+                    {this.state.useSequencer && 
+                    <FormControl style={{ marginTop: "50px" }}>
+                    <InputLabel
+                        style={{ transform: "translateX(15px)", fontSize: "12px" }}
+                        id="label"
+                    >
+                        Sequencer Name
+                    </InputLabel>
+                    <Input
+                        variant="outlined"
+                        name="sequenceName"
+                        value={this.state.sequenceName}
+                        onChange={this.handleFormChange}
+                    />
+                    </FormControl>
+                    }
+                    <FormControl style={{ marginTop: "50px" }}>
+                    <InputLabel
+                        style={{ transform: "translateX(15px)", fontSize: "12px" }}
+                        id="label"
+                    >
+                        Instrument
                     </InputLabel>
                     <Select
                         style={{ width: "150px" }}
                         labelId="label"
                         id="select"
-                        value={this.state.group}
+                        value={this.state.instrument}
                         onChange={this.handleFormChange}
-                        name="group"
+                        name="instrument"
                     >
-                        {this.props.user.groups.map((group) => (
-                        <MenuItem value={group.id} key={group.id}>
-                            {group.name}
+                        {instrumentList.map((name, index) => (
+                        <MenuItem value={name} key={index}>
+                            {name}
                         </MenuItem>
                         ))}
                     </Select>
@@ -142,7 +195,6 @@ class SaveCopyModal extends React.Component {
                     </Button>
                     </FormControl>
                 </form>
-                )}
             </Modal>
             </>
         );
@@ -158,4 +210,4 @@ const mapDispatch = dispatch => ({
 
 })
 
-export const SaveSnippetCopy = connect(mapState,mapDispatch)(SaveCopyModal)
+export const AddInstrument = connect(mapState,mapDispatch)(SaveCopyModal)
