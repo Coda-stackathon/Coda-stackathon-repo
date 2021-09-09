@@ -2,6 +2,8 @@ import React from 'react'
 import {connect} from 'react-redux'
 import {Link} from 'react-router-dom'
 import {logout} from '../store'
+import { Login, Signup } from './modals'
+import { toast } from 'react-toastify'
 
 const Navbar = ({handleClick, isLoggedIn}) => (
   <div className="header">
@@ -18,7 +20,7 @@ const Navbar = ({handleClick, isLoggedIn}) => (
           <Link to="/snippets">Browse Snippets</Link>
           {/* <Link to="/blog">Blog</Link> */}
           <Link to="/home">Home</Link>
-          <a href="#" onClick={handleClick}>
+          <a onClick={handleClick}>
             Logout
           </a>
         </div>
@@ -28,8 +30,10 @@ const Navbar = ({handleClick, isLoggedIn}) => (
           <Link to="/snippets">Browse Snippets</Link>
           {/* <Link to="/blog">Blog</Link> */}
           <Link to="/home">Home</Link>
-          <Link to="/login">Login</Link>
-          <Link to="/signup">Sign Up</Link>
+          {/* <Link to="/login">Login</Link>
+          <Link to="/signup">Sign Up</Link> */}
+          <Login />
+          <Signup />
         </div>
       )}
     </nav>
@@ -49,6 +53,7 @@ const mapDispatch = dispatch => {
   return {
     handleClick() {
       dispatch(logout())
+      toast.error('logged out', {position: toast.POSITION.TOP_CENTER, autoClose: 3000})
     }
   }
 }

@@ -1,7 +1,6 @@
 import React, { Component, Fragment } from "react";
 import { connect } from "react-redux";
 import { withRouter, Route, Switch, Redirect } from "react-router-dom";
-import { Login, Signup } from "./components/AuthForm";
 import Home from "./components/Home";
 import { Loops } from "./components/Loops";
 import { BinaryTree } from "./components/BinaryTree";
@@ -27,22 +26,15 @@ class Routes extends Component {
       <div>
         <Switch>
           <React.Fragment>
-          {!isLoggedIn && (
-            <>
-              <Route exact path="/" component={Login} />
-              <Route path="/login" component={Login} />
-              <Route path="/signup" component={Signup} />
-            </>
-          )}
-          <Route path="/home" component={Home} />
-          <Route path="/loops" component={Loops} />
-          <Route path="/binaryTree" component={BinaryTree} />
-          <Route path="/aMatrix" component={Amatrix} />
-          <Route path="/snippet" component={Snippet} />
-          <Route path="/groups" component={ListGroups} />
-          <Route exact path="/snippets" component={AllSnippets} />
-          <Route path="/snippets/:id" component={SingleSnippet} />
-          <Route exact path="/">
+            <Route path="/home" component={Home} />
+            <Route path="/loops" component={Loops} />
+            <Route path="/binaryTree" component={BinaryTree} />
+            <Route path="/aMatrix" component={Amatrix} />
+            <Route path="/snippet" component={Snippet} />
+            <Route path="/groups" component={ListGroups} />
+            <Route exact path="/snippets" component={AllSnippets} />
+            <Route path="/snippets/:id" component={SingleSnippet} />
+            <Route exact path="/">
             <Redirect to="/home" />
           </Route>
           </React.Fragment>
